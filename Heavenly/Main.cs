@@ -42,8 +42,13 @@ namespace Heavenly
             Console.WriteLine("                        ||                            ||");
             Console.WriteLine("                        ||                            ||");
             Console.WriteLine("                        ================================");
+            Console.WriteLine(" ");
             Patches.ApplyPatches();
-            MelonLogger.Msg("Fuck you");
+            MelonLogger.Msg("MelonLoader");
+            CU.Log("I");
+            CU.Log("Hate");
+            CU.Log("My");
+            CU.Log("Life");
         }
     }
 }
