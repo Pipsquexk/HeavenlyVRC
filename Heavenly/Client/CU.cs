@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 using Heavenly.Client.API;
+using System.Net;
+using MelonLoader;
 
 namespace Heavenly.Client
 {
@@ -46,12 +48,19 @@ namespace Heavenly.Client
             if (!Directory.Exists("Heavenly"))
             {
                 Directory.CreateDirectory("Heavenly");
+                File.WriteAllText("Heavenly\\Keybindings.cfg", JsonConvert.SerializeObject(new KeyConfig() { FlyKey = "F", EarrapeKey = "E", RejoinKey = "R" }));
+                File.WriteAllText("Heavenly\\Notifications.cfg", JsonConvert.SerializeObject(new NotifConfig() { Voice = "Male", UseNotifs = true }));
+                using (WebClient client = new WebClient())
+                {
+                    client.DownloadFileAsync(new Uri("https://www.heavenlyclient.com/Notifs.hev"), "Heavenly\\Notifs.hev");
+                }
             }
 
             if (!File.Exists("Heavenly\\Keybindings.cfg"))
             {
                 File.WriteAllText("Heavenly\\Keybindings.cfg", JsonConvert.SerializeObject(new KeyConfig() { FlyKey = "F", EarrapeKey = "E", RejoinKey = "R" }));
                 File.WriteAllText("Heavenly\\Notifications.cfg", JsonConvert.SerializeObject(new NotifConfig() { Voice = "Male", UseNotifs = true }));
+
             }
 
             Main.kConfig = JsonConvert.DeserializeObject<KeyConfig>(File.ReadAllText("Heavenly\\Keybindings.cfg"));
@@ -75,6 +84,17 @@ namespace Heavenly.Client
 
             Log("Started Heavenly!");
 
+            
+
+        }
+
+        public static List<HevApiAvatar> SearchAvatars(string name)
+        {
+            using (WebClient client = new WebClient())
+            {
+                var jsonString = client.DownloadString($"https://www.heavenlyclient.com/api/avatars?name={name}");
+                return JsonConvert.DeserializeObject<List<HevApiAvatar>>(jsonString);
+            }
         }
 
         public static void Log(string txt)

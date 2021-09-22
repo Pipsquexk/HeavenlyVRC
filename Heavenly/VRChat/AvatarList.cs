@@ -1,7 +1,9 @@
 ﻿using Heavenly.Client;
 using Heavenly.Client.API;
+using Heavenly.VRChat.Utilities;
 using MelonLoader;
 using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -49,7 +51,7 @@ namespace Heavenly.VRChat
             vrcAvatarList.Method_Protected_Void_List_1_T_Int32_Boolean_VRCUiContentButton_0<ApiAvatar>(avatars);
         }
 
-        public void UpdateAvatarList(ApiAvatar avatar)
+        public void UpdateAvatarFavList(ApiAvatar avatar)
         {
 
             vrcAvatarList.isOffScreen = false;
@@ -57,7 +59,7 @@ namespace Heavenly.VRChat
 
             avatars.Insert(0, avatar);
 
-            hAvatars.Insert(0, new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.imageUrl, avatar.thumbnailImageUrl));
+            hAvatars.Insert(0, new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.thumbnailImageUrl, avatar.assetUrl));
 
             vrcAvatarList.Method_Protected_Void_List_1_T_Int32_Boolean_VRCUiContentButton_0<ApiAvatar>(avatars);
 
@@ -65,7 +67,26 @@ namespace Heavenly.VRChat
 
         }
 
-        public void AddOrRemoveAvatar(ApiAvatar avatar)
+        public IEnumerator AddSearchAvatars(List<HevApiAvatar> hevAvatars)
+        {
+            vrcAvatarList.isOffScreen = false;
+            vrcAvatarList.enabled = true;
+
+            Il2CppSystem.Collections.Generic.List<ApiAvatar> resAvis = new Il2CppSystem.Collections.Generic.List<ApiAvatar>();
+
+            foreach (HevApiAvatar avi in hevAvatars)
+            {
+                resAvis.Add(avi.ToApiAvatar());
+                yield return null;
+            }
+
+            vrcAvatarList.Method_Protected_Void_List_1_T_Int32_Boolean_VRCUiContentButton_0<ApiAvatar>(resAvis);
+
+            text.text = $"{name} - {resAvis.Count} Results";
+
+        }
+
+        public void AddOrRemoveFavAvatar(ApiAvatar avatar)
         {
             vrcAvatarList.isOffScreen = false;
             vrcAvatarList.enabled = true;
@@ -92,7 +113,7 @@ namespace Heavenly.VRChat
             avatars.Insert(0, avatar);
 
             hAvatars = JsonConvert.DeserializeObject<List<HevApiAvatar>>(favTxt);
-            hAvatars.Insert(0, new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.imageUrl, avatar.thumbnailImageUrl));
+            hAvatars.Insert(0, new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.thumbnailImageUrl, avatar.assetUrl));
             var apiList = JsonConvert.SerializeObject(hAvatars);
 
             File.WriteAllText("Heavenly\\HeavenlyFavorites.txt", apiList);

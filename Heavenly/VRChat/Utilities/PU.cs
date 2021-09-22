@@ -1,4 +1,5 @@
 ﻿using Heavenly.Client;
+using Heavenly.Client.API;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,14 +7,21 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using VRC;
 using VRC.Core;
 using VRC.SDKBase;
+using VRC.UI;
 
-namespace Heavenly.VRChat
+namespace Heavenly.VRChat.Utilities
 {
     public static class PU
     {
+
+        public static QuickMenu GetQuickMenu()
+        {
+            return QuickMenu.field_Private_Static_QuickMenu_0;
+        }
 
         public static VRCPlayer GetVRCPlayer()
         {
@@ -41,6 +49,42 @@ namespace Heavenly.VRChat
             client.Headers.Add("Cookie", "auth=" + ApiCredentials.authToken);
             client.DownloadFileAsync(new Uri(avatar.assetUrl), $"Heavenly\\Avatars\\{avatar.name}-{avatar.id}-{avatar.authorName}.vrca");
 
+        }
+
+        public static void ForceClone(ApiAvatar avatar)
+        {
+            if (avatar.releaseStatus.ToLower() == "private")
+            {
+                CU.Log(ConsoleColor.Red, $"Cannot clone {avatar.name}, it is private");
+                return;
+            }
+
+            var page = GameObject.Find("Screens").transform.Find("Avatar").GetComponent<PageAvatar>();
+
+            page.field_Public_SimpleAvatarPedestal_0 = new VRC.SimpleAvatarPedestal()
+            {
+                field_Internal_ApiAvatar_0 = avatar
+            };
+                
+            page.ChangeToSelectedAvatar();
+        }
+
+        public static void ForceCloneByID(string id)
+        {
+
+            var page = GameObject.Find("Screens").transform.Find("Avatar").GetComponent<PageAvatar>();
+
+            page.field_Public_SimpleAvatarPedestal_0 = new VRC.SimpleAvatarPedestal()
+            {
+                field_Internal_ApiAvatar_0 = new ApiAvatar() { id = id }
+            };
+
+            page.ChangeToSelectedAvatar();
+        }
+
+        public static ApiAvatar ToApiAvatar(this HevApiAvatar avi)
+        {
+            return new ApiAvatar() { name = avi.name, id = avi.id, authorName = avi.authorName, authorId = avi.authorId, thumbnailImageUrl = avi.thumbnailImageUrl, assetUrl = avi.assetUrl };
         }
 
         //public static async void ReuploadAvatar(ApiAvatar avatar)

@@ -20,37 +20,46 @@ using VRC.Core;
 using RubyButtonAPI;
 using Transmtn;
 using UnhollowerRuntimeLib;
+using Heavenly.VRChat.Utilities;
 
 namespace Heavenly
 {
     public class Main : MelonMod
     {
 
-        public GameObject heavenlyFavoriteButton, downloadVrcaButton;
+        public static QMNestedButton mainMenu;
+
+        public static QMSingleButton searchBotButton;
+        public static QMSingleButton forceCloneIdButton;
+
+        public Vector3 serPos;
+        public Quaternion serRot;
+
+        public static GameObject heavenlyFavoriteButton, downloadVrcaButton, searchAvatarsButton;
 
         public static AvatarList favList;
+        public static AvatarList searchList;
 
         public static AssetBundle notifBundle;
 
-        public Vector3 defaultGravity = Vector3.zero;
+        public static Vector3 defaultGravity = Vector3.zero;
 
         public static KeyConfig kConfig;
 
         public static NotifConfig nConfig;
 
-        public bool monke = false, welcomed = false, directFly = false, earrape = false;
+        public static bool monke = false, welcomed = false, directFly = false, earrape = false;
 
         public static bool serialize = false;
 
         public GameObject monkeGO;
 
-        public override async void OnApplicationStart()
+        public async override void OnApplicationStart()
         {
-            base.OnApplicationStart();
             Console.Clear();
-            MelonUtils.SetConsoleTitle($"Heavenly - v{Info.Version}");
-            await CU.FirstStartCheck();
+            MelonUtils.SetConsoleTitle($"Heavenly - v1.0");
             Console.Clear();
+            CU.FirstStartCheck();
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine("                   ,                                 _        ");
             Console.WriteLine("                  /|   |                            | |       ");
@@ -64,11 +73,11 @@ namespace Heavenly
             Console.WriteLine(" ");
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine($"                        ╔─────────────╤───────────────╗");
-            Console.WriteLine($"                        │  Ctrl + {kConfig.FlyKey}   ║   Direct Fly  │");
+            Console.WriteLine($"                        │  Ctrl + {Main.kConfig.FlyKey}   ║   Direct Fly  │");
             Console.WriteLine($"                        ╞─────────────╬───────────────╡");
-            Console.WriteLine($"                        │  Ctrl + {kConfig.EarrapeKey}   ║  Earrape Mic  │");
+            Console.WriteLine($"                        │  Ctrl + {Main.kConfig.EarrapeKey}   ║  Earrape Mic  │");
             Console.WriteLine($"                        ╞─────────────╬───────────────╡");
-            Console.WriteLine($"                        │  Ctrl + {kConfig.RejoinKey}   ║     Rejoin    │");
+            Console.WriteLine($"                        │  Ctrl + {Main.kConfig.RejoinKey}   ║     Rejoin    │");
             Console.WriteLine($"                        ╞─────────────╬───────────────╡");
             Console.WriteLine($"                        │  Ctrl + M   ║   Monke Mode  │");
             Console.WriteLine($"                        ╞─────────────╬───────────────╡");
@@ -77,11 +86,11 @@ namespace Heavenly
             Console.WriteLine($" ");
             Console.ForegroundColor = ConsoleColor.Gray;
             Patches.ApplyPatches();
-            defaultGravity = Physics.gravity;
-            
+            Main.defaultGravity = Physics.gravity;
+            MelonCoroutines.Start(Main.Welcome());
         }
 
-        public override async void OnSceneWasLoaded(int buildIndex, string sceneName)
+        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
             base.OnSceneWasLoaded(buildIndex, sceneName);
             if (buildIndex == -1)
@@ -90,7 +99,7 @@ namespace Heavenly
                     return;
                 if(!welcomed)
                 {
-                    MelonCoroutines.Start(Welcome());
+                    MelonCoroutines.Start(Intro());
                 }
             }
         }
@@ -136,20 +145,38 @@ namespace Heavenly
             {
                 Networking.GoToRoom($"{RoomManager.field_Internal_Static_ApiWorld_0.id}:{RoomManager.field_Internal_Static_ApiWorldInstance_0.instanceId}");
             }
+
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("l"))
+            {
+                PU.GetQuickMenu().Method_Public_Void_Player_0(PU.GetPlayer());
+            }
             
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("s"))
             {
                 serialize = !serialize;
+                if (serialize)
+                {
+                    serPos = PU.GetVRCPlayer().transform.position;
+                    serRot = PU.GetVRCPlayer().transform.rotation;
+                }
+                else
+                {
+                    PU.GetVRCPlayer().transform.position = serPos;
+                    PU.GetVRCPlayer().transform.rotation = serRot;
+                }
                 CU.Log($"Serialize: {(serialize ? "ON" : "OFF") }");
             }
 
-            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("a"))
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("j"))
             {
                 foreach (GameObject gO in GameObject.FindObjectsOfType<GameObject>())
                 {
-                    CU.Log(gO.name);
+                    if (gO.transform.parent != null && gO.transform.parent.parent != null)
+                    {
+                        CU.Log($"{gO.transform.parent.parent.name}/{gO.transform.parent.name}/{gO.name}");
+                    }
                 }
-                MelonCoroutines.Start(Intro());
+                
             }
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("m"))
@@ -169,7 +196,6 @@ namespace Heavenly
                                 authorName = "xKomorebi",
                                 imageUrl = "https://api.vrchat.cloud/api/1/file/file_8ce59b3c-9448-4cee-9626-fdcf2b7c9159/1/file",
                                 thumbnailImageUrl = "https://api.vrchat.cloud/api/1/image/file_8ce59b3c-9448-4cee-9626-fdcf2b7c9159/1/256"
-
                             }
                         },
                         field_Public_SimpleAvatarPedestal_1 = new VRC.SimpleAvatarPedestal()
@@ -224,13 +250,18 @@ namespace Heavenly
 
         public IEnumerator Intro()
         {
+            while (PU.GetVRCPlayer() == null)
+            {
+                yield return null;
+            }
             var welcomeGO = GameObject.Instantiate(Main.notifBundle.LoadAsset<GameObject>($"{nConfig.Voice}W.prefab"), Camera.main.transform.position, Quaternion.identity);
             yield return new WaitForSeconds(3.5f);
             GameObject.Destroy(welcomeGO);
         }
 
-        public IEnumerator Welcome()
+        public static IEnumerator Welcome()
         {
+
             while (PU.GetVRCPlayer() == null)
             {
                 yield return null;
@@ -244,16 +275,14 @@ namespace Heavenly
             
             
             
-            var welcomeGO = GameObject.Instantiate(Main.notifBundle.LoadAsset<GameObject>($"{nConfig.Voice}W.prefab"), Camera.main.transform.position, Quaternion.identity);
-            yield return new WaitForSeconds(3.5f);
-            GameObject.Destroy(welcomeGO);
             welcomed = true;
             favList = new AvatarList("Heavenly Favorites");
+            searchList = new AvatarList("Heavenly Search");
             if (File.Exists("Heavenly\\HeavenlyFavorites.txt"))
             {
                 foreach (HevApiAvatar avi in JsonConvert.DeserializeObject<List<HevApiAvatar>>(File.ReadAllText("Heavenly\\HeavenlyFavorites.txt")))
                 {
-                    favList.UpdateAvatarList(new ApiAvatar() { id = avi.id, authorId = avi.authorId, name = avi.name, authorName = avi.authorName, imageUrl = avi.imageUrl, thumbnailImageUrl = avi.thumbnailImageUrl });
+                    favList.UpdateAvatarFavList(avi.ToApiAvatar());
                 }
             }
             else
@@ -262,8 +291,12 @@ namespace Heavenly
                 File.WriteAllText("Heavenly\\HeavenlyFavorites.txt", JsonConvert.SerializeObject(new List<HevApiAvatar>() { newAvi }));
             }
 
+            ButtonHandler.GetUIBackground().GetComponentInChildren<RectTransform>().localScale += new Vector3(0.15f, 0, 0);
+            ButtonHandler.GetUIBackground().GetComponentInChildren<RectTransform>().anchoredPosition -= new Vector2(105f, 0);
+
             heavenlyFavoriteButton = GameObject.Instantiate(ButtonHandler.GetChangeAvatarButton(), ButtonHandler.GetChangeAvatarButton().transform.parent);
             downloadVrcaButton = GameObject.Instantiate(ButtonHandler.GetChangeAvatarButton(), ButtonHandler.GetChangeAvatarButton().transform.parent);
+            searchAvatarsButton = GameObject.Instantiate(ButtonHandler.GetChangeAvatarButton(), ButtonHandler.GetChangeAvatarButton().transform.parent);
 
             ButtonHandler.GetOriginalAvatarFavoriteButton().GetComponent<RectTransform>().anchoredPosition -= new Vector2(0, 25);
             ButtonHandler.GetOriginalAvatarFavoriteButton().GetComponent<RectTransform>().localScale -= new Vector3(0, 0.1f, 0);
@@ -274,17 +307,36 @@ namespace Heavenly
 
             ButtonHandler.SetButtonColor(heavenlyFavoriteButton, Color.red);
             heavenlyFavoriteButton.GetComponentInChildren<Button>().onClick = new Button.ButtonClickedEvent();
-            heavenlyFavoriteButton.GetComponentInChildren<Button>().onClick.AddListener(new Action(() => { favList.AddOrRemoveAvatar(GameObject.FindObjectOfType<PageAvatar>().field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0); }));
+            heavenlyFavoriteButton.GetComponentInChildren<Button>().onClick.AddListener(new Action(() => { favList.AddOrRemoveFavAvatar(GameObject.FindObjectOfType<PageAvatar>().field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0); }));
 
-            downloadVrcaButton.GetComponent<RectTransform>().anchoredPosition += new Vector2(310, 685);
-            downloadVrcaButton.GetComponent<RectTransform>().localScale -= new Vector3(0.1f, 0.1f, 0);
-            downloadVrcaButton.GetComponentInChildren<Text>().text = "Download";
+            downloadVrcaButton.GetComponent<RectTransform>().anchoredPosition -= new Vector2(285, 162.5f);
+            downloadVrcaButton.GetComponent<RectTransform>().localScale -= new Vector3(0.2f, 0.1f, 0);
+            downloadVrcaButton.GetComponentInChildren<Text>().text = "Download vrca";
 
-            ButtonHandler.SetButtonColor(downloadVrcaButton, Color.magenta);
+            ButtonHandler.SetButtonColor(downloadVrcaButton, Color.red);
             downloadVrcaButton.GetComponentInChildren<Button>().onClick = new Button.ButtonClickedEvent();
             downloadVrcaButton.GetComponentInChildren<Button>().onClick.AddListener(new Action(() => { PU.DownloadAvatar(GameObject.FindObjectOfType<PageAvatar>().field_Public_SimpleAvatarPedestal_0.field_Internal_ApiAvatar_0); }));
 
-            var fuck = GameObject.Instantiate(ButtonHandler.GetQuickMenuNotifTab(), ButtonHandler.GetQuickMenuNotifTab().transform.parent);
+            searchAvatarsButton.GetComponent<RectTransform>().anchoredPosition += new Vector2(1125, 685);
+            searchAvatarsButton.GetComponent<RectTransform>().localScale -= new Vector3(0.2f, 0.1f, 0);
+            searchAvatarsButton.GetComponentInChildren<Text>().text = "Search";
+
+
+            ButtonHandler.SetButtonColor(searchAvatarsButton, Color.red);
+            searchAvatarsButton.GetComponentInChildren<Button>().onClick = new Button.ButtonClickedEvent();
+            var searchAvis = DelegateSupport.ConvertDelegate<Il2CppSystem.Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>>(new Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>((str, LK, tex) => { MelonCoroutines.Start(searchList.AddSearchAvatars(CU.SearchAvatars(str))); }));
+            searchAvatarsButton.GetComponentInChildren<Button>().onClick.AddListener(new Action(() => { UIU.OpenKeyboardPopup("Search Avatars", "Enter Author/Avatar name.....", searchAvis); }));
+
+
+            ButtonHandler.GetCloneAvatarButton().GetComponentInChildren<Button>().onClick = new Button.ButtonClickedEvent();
+            ButtonHandler.GetCloneAvatarButton().GetComponentInChildren<Button>().onClick.AddListener(new Action(() => { PU.ForceClone(PU.GetQuickMenu().field_Private_Player_0.prop_ApiAvatar_0); }));
+
+
+            //var fuck = GameObject.Instantiate(ButtonHandler.GetQuickMenuNotifTab(), ButtonHandler.GetQuickMenuNotifTab().transform.parent);
+            var forceClone = DelegateSupport.ConvertDelegate<Il2CppSystem.Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>>(new Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>((str, LK, tex) => { PU.ForceCloneByID(str); }));
+            mainMenu = new QMNestedButton("ShortcutMenu", 0, 0, "Heavenly", "Main Menu", Color.red);
+            searchBotButton = new QMSingleButton(mainMenu, 1, 0, "Search For\nPlayer", delegate {  }, "Search for a player in public worlds", Color.red);
+            forceCloneIdButton = new QMSingleButton(mainMenu, 2, 0, "Force Clone\nby ID", delegate { UIU.OpenKeyboardPopup("Force Clone ID", "Enter Avatar ID.....", forceClone); }, "Force clone an avatar by the avatar ID", Color.red);
 
             //foreach (Component com in fuck.GetComponentsInChildren<Component>())
             //{

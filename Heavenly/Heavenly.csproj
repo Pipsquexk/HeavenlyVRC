@@ -157,7 +157,8 @@
     <Compile Include="VRChat\AvatarList.cs" />
     <Compile Include="VRChat\Handlers\ButtonHandler.cs" />
     <Compile Include="VRChat\Handlers\NotificationHandler.cs" />
-    <Compile Include="VRChat\PU.cs" />
+    <Compile Include="VRChat\Utilities\PU.cs" />
+    <Compile Include="VRChat\Utilities\UIU.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

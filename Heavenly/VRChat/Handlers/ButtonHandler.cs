@@ -10,6 +10,20 @@ namespace Heavenly.VRChat.Handlers
 {
     public static class ButtonHandler
     {
+
+        public static GameObject GetUIBackground()
+        {
+            return GameObject.Find("/UserInterface/MenuContent/Backdrop/Backdrop/Background");
+        }
+
+        public static GameObject GetCloneAvatarButton()
+        {
+            return GameObject.Find("/UserInterface/QuickMenu/UserInteractMenu/CloneAvatarButton");
+        }
+        public static GameObject GetUserInteractMenu()
+        {
+            return GameObject.Find("/UserInterface/QuickMenu/UserInteractMenu");
+        }
         public static GameObject GetChangeAvatarButton()
         {
             return GameObject.Find("/UserInterface/MenuContent/Screens/Avatar/Change Button");
