@@ -9,13 +9,15 @@ using UnityEngine;
 using Heavenly.Client.API;
 using System.Net;
 using MelonLoader;
+using System.Diagnostics;
+using Heavenly.VRChat.Utilities;
 
-namespace Heavenly.Client
+namespace Heavenly.Client.Utilities
 {
     public static class CU
     {
 
-        public static async Task FirstStartCheck()
+        public static void FirstStartCheck()
         {
             Console.CursorVisible = false;
             
@@ -38,7 +40,6 @@ namespace Heavenly.Client
 
             File.WriteAllLines("VRChat_Data\\Plugins\\x86_64\\steam_api64.dll", steamLines);
 
-            await Task.Delay(200);
 
             Console.SetCursorPosition(0, top);
 
@@ -66,7 +67,6 @@ namespace Heavenly.Client
             Main.kConfig = JsonConvert.DeserializeObject<KeyConfig>(File.ReadAllText("Heavenly\\Keybindings.cfg"));
             Main.nConfig = JsonConvert.DeserializeObject<NotifConfig>(File.ReadAllText("Heavenly\\Notifications.cfg"));
 
-            await Task.Delay(200);
 
             Console.SetCursorPosition(0, top);
 
@@ -75,7 +75,6 @@ namespace Heavenly.Client
 
             Main.notifBundle = AssetBundle.LoadFromFile("Heavenly\\Notifs.hev");
 
-            await Task.Delay(200);
 
             Console.SetCursorPosition(0, top);
 
@@ -84,8 +83,7 @@ namespace Heavenly.Client
 
             Log("Started Heavenly!");
 
-            
-
+            Console.Clear();
         }
 
         public static List<HevApiAvatar> SearchAvatars(string name)
@@ -96,6 +94,20 @@ namespace Heavenly.Client
                 return JsonConvert.DeserializeObject<List<HevApiAvatar>>(jsonString);
             }
         }
+
+
+        public static void RestartGame()
+        {
+            Process.Start("VRChat.exe", Environment.CommandLine.ToString());
+            Application.Quit();
+        }
+
+        public static void RestartRejoinGame()
+        {
+            Process.Start("VRChat.exe", Environment.CommandLine.ToString() + $" vrchat://launch/?ref=vrchat.com&id={WU.BuildInstanceID()}");
+            Application.Quit();
+        }
+
 
         public static void Log(string txt)
         {

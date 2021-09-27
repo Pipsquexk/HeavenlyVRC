@@ -14,6 +14,11 @@ namespace Heavenly.VRChat.Handlers
         {
             myId = PU.GetPlayer().field_Private_APIUser_0.id;
 
+            if(p.field_Private_APIUser_0.id == myId && WebsocketHandler.beingTaggedAlong)
+            {
+                WebsocketHandler.SendTagAlongUpdate();
+            }
+
             if (p.field_Private_APIUser_0.id == myId || Main.nConfig.UseNotifs == false)
                 return;
 
@@ -41,6 +46,9 @@ namespace Heavenly.VRChat.Handlers
 
         public static IEnumerator Join()
         {
+            if (PU.GetVRCPlayer() == null)
+                yield break;
+
             var ob = GameObject.Instantiate(Main.notifBundle.LoadAsset<GameObject>($"JoinNotif.prefab"), PU.GetVRCPlayer().gameObject.transform);
             yield return new WaitForSeconds(3);
             GameObject.Destroy(ob);
@@ -48,6 +56,9 @@ namespace Heavenly.VRChat.Handlers
 
         public static IEnumerator Leave()
         {
+            if (PU.GetVRCPlayer() == null)
+                yield break;
+
             var ob = GameObject.Instantiate(Main.notifBundle.LoadAsset<GameObject>($"LeaveNotif.prefab"), PU.GetVRCPlayer().gameObject.transform);
             yield return new WaitForSeconds(3);
             GameObject.Destroy(ob);
@@ -55,6 +66,9 @@ namespace Heavenly.VRChat.Handlers
 
         public static IEnumerator Notif()
         {
+            if (PU.GetVRCPlayer() == null)
+                yield break;
+
             var ob = GameObject.Instantiate(Main.notifBundle.LoadAsset<GameObject>($"Notif.prefab"), PU.GetVRCPlayer().gameObject.transform);
             yield return new WaitForSeconds(3);
             GameObject.Destroy(ob);

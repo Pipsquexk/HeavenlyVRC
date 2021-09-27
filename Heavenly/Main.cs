@@ -1,36 +1,36 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Harmony;
-using MelonLoader;
-using UnityEngine;
-using Heavenly.Client;
+﻿using Heavenly.Client;
 using Heavenly.Client.API;
+using Heavenly.Client.Utilities;
 using Heavenly.VRChat;
 using Heavenly.VRChat.Handlers;
+using Heavenly.VRChat.Utilities;
+using MelonLoader;
 using Newtonsoft.Json;
-using System.Collections;
-using VRC.UI;
-using VRC.SDKBase;
-using UnityEngine.UI;
-using VRC.Core;
 using RubyButtonAPI;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using Transmtn;
 using UnhollowerRuntimeLib;
-using Heavenly.VRChat.Utilities;
+using UnityEngine;
+using UnityEngine.UI;
+using VRC;
+using VRC.Core;
+using VRC.SDK3.Video.Components.Base;
+using VRC.SDKBase;
+using VRC.Udon;
+using VRC.Udon.Common.Interfaces;
+using VRC.UI;
 
 namespace Heavenly
 {
     public class Main : MelonMod
     {
-
         public static QMNestedButton mainMenu;
 
-        public static QMSingleButton searchBotButton;
-        public static QMSingleButton forceCloneIdButton;
+        public static QMSingleButton searchBotButton, forceCloneIdButton, restartButton, restartRejoinButton;
+        public static QMToggleButton flyToggleButton, espToggleButton;
 
         public Vector3 serPos;
         public Quaternion serRot;
@@ -48,17 +48,18 @@ namespace Heavenly
 
         public static NotifConfig nConfig;
 
-        public static bool monke = false, welcomed = false, directFly = false, earrape = false;
+        public static bool monke = false, welcomed = false, directFly = false, earrape = false, sittingOnHead = false;
 
         public static bool serialize = false;
 
         public GameObject monkeGO;
 
-        public async override void OnApplicationStart()
+        public static Player selectedSit;
+
+        public override void OnApplicationStart()
         {
             Console.Clear();
             MelonUtils.SetConsoleTitle($"Heavenly - v1.0");
-            Console.Clear();
             CU.FirstStartCheck();
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine("                   ,                                 _        ");
@@ -87,6 +88,7 @@ namespace Heavenly
             Console.ForegroundColor = ConsoleColor.Gray;
             Patches.ApplyPatches();
             Main.defaultGravity = Physics.gravity;
+            WebsocketHandler.ConnectToWebsockets();
             MelonCoroutines.Start(Main.Welcome());
         }
 
@@ -97,7 +99,7 @@ namespace Heavenly
             {
                 if (!nConfig.UseNotifs)
                     return;
-                if(!welcomed)
+                if (!welcomed)
                 {
                     MelonCoroutines.Start(Intro());
                 }
@@ -113,18 +115,21 @@ namespace Heavenly
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(kConfig.FlyKey.ToLower()))
             {
-                directFly = !directFly;
-                if (directFly)
+                flyToggleButton.setToggleState(!directFly, true);
+            }
+
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("u"))
+            {
+                if (PU.GetSelectedPlayer() != null)
                 {
-                    PU.GetVRCPlayer().GetComponent<CharacterController>().enabled = false;
-                    Physics.gravity = Vector3.zero;
+                    selectedSit = PU.GetSelectedPlayer();
                 }
-                else
-                {
-                    PU.GetVRCPlayer().GetComponent<CharacterController>().enabled = true;
-                    Physics.gravity = defaultGravity;
-                }
-                CU.Log($"Fly: {(directFly ? "ON" : "OFF") }");
+                ToggleSitOnHead();
+            }
+
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("h"))
+            {
+                RU.ReuploadAvatar(PU.GetSelectedPlayer().prop_ApiAvatar_0);
             }
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(kConfig.EarrapeKey.ToLower()))
@@ -148,9 +153,9 @@ namespace Heavenly
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("l"))
             {
-                PU.GetQuickMenu().Method_Public_Void_Player_0(PU.GetPlayer());
+                UIU.GetQuickMenu().Method_Public_Void_Player_0(PU.GetPlayer());
             }
-            
+
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("s"))
             {
                 serialize = !serialize;
@@ -167,16 +172,76 @@ namespace Heavenly
                 CU.Log($"Serialize: {(serialize ? "ON" : "OFF") }");
             }
 
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("t"))
+            {
+                if (PU.GetSelectedPlayer() == null)
+                    return;
+
+                PU.RequestToTagAlong(PU.GetSelectedPlayer());
+
+                //UIU.OpenVRCUIPopup("Tag Along Request", $"Pip would like to tag along with you!", "Accept",
+                //    new Action(() =>
+                //    {
+                //        WebsocketHandler.tagAlongSocket.Send($"{PU.GetPlayer().field_Private_APIUser_0.displayName}:{PU.GetPlayer().field_Private_APIUser_0.id}:{PU.GetPlayer().field_Private_APIUser_0.id}:response:null");
+                //    }), "Decline");
+            }
+
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("j"))
             {
-                foreach (GameObject gO in GameObject.FindObjectsOfType<GameObject>())
+                Console.Write("Enter URL: ");
+                var url = Console.ReadLine();
+                foreach (BaseVRCVideoPlayer vRCVideoPlayer in GameObject.FindObjectsOfType<BaseVRCVideoPlayer>())
                 {
-                    if (gO.transform.parent != null && gO.transform.parent.parent != null)
+                    Networking.SetOwner(PU.GetVRCPlayerApi(), vRCVideoPlayer.gameObject);
+                    vRCVideoPlayer.EnableAutomaticResync = false;
+                    CU.Log("[BaseVRCVideoPlayer] Disabled automatic resync");
+                    vRCVideoPlayer.SetTime(0);
+                    CU.Log("[BaseVRCVideoPlayer] Set time to 0");
+                    vRCVideoPlayer.SetIndexMarker(0);
+                    CU.Log("[BaseVRCVideoPlayer] Set index marker to 0");
+                    vRCVideoPlayer.Stop();
+                    CU.Log("[BaseVRCVideoPlayer] Stopped");
+                    vRCVideoPlayer.LoadURL(new VRCUrl(url));
+                    CU.Log($"[BaseVRCVideoPlayer] Loaded URL: {url}");
+                    vRCVideoPlayer.PlayURL(new VRCUrl(url));
+                    CU.Log($"[BaseVRCVideoPlayer] Play URL: {url}");
+                    vRCVideoPlayer.Play();
+                    CU.Log($"[BaseVRCVideoPlayer] Play");
+                    foreach (IUdonBehaviour beh in vRCVideoPlayer._udonBehaviours)
                     {
-                        CU.Log($"{gO.transform.parent.parent.name}/{gO.transform.parent.name}/{gO.name}");
+                        beh.InitializeUdonContent();
+                        beh.RunEvent("Fuck you", null);
+                        beh.RunProgram("Fuck you");
+                        beh.InitializeUdonContent();
+                        beh.InitializeUdonContent();
                     }
                 }
-                
+
+                foreach (GameObject go in VRC_SceneDescriptor.Instance.DynamicPrefabs)
+                {
+                    Networking.Instantiate(VRC_EventHandler.VrcBroadcastType.Always, go.name, new Vector3(-100, -100, -100), Quaternion.identity);
+                    CU.Log(go.name);
+                }
+            }
+
+            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("p"))
+            {
+                foreach (BaseVRCVideoPlayer vRCVideoPlayer in GameObject.FindObjectsOfType<BaseVRCVideoPlayer>())
+                {
+                    Networking.SetOwner(PU.GetVRCPlayerApi(), vRCVideoPlayer.gameObject);
+                    vRCVideoPlayer.Play();
+                    CU.Log($"[BaseVRCVideoPlayer] Play");
+                }
+
+                var outNumber = "NULL";
+                foreach (UdonBehaviour beh in GameObject.FindObjectsOfType<UdonBehaviour>())
+                {
+                    beh.publicVariables.TryGetVariableValue("solution", out outNumber);
+                    if (outNumber != null)
+                    {
+                        Console.WriteLine(outNumber);
+                    }
+                }
             }
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("m"))
@@ -268,13 +333,13 @@ namespace Heavenly
             }
             NetworkManager.field_Internal_Static_NetworkManager_0.field_Internal_VRCEventDelegate_1_Player_0.field_Private_HashSet_1_UnityAction_1_T_0.Add(new Action<VRC.Player>(NotificationHandler.JoinNotify));
             NetworkManager.field_Internal_Static_NetworkManager_0.field_Internal_VRCEventDelegate_1_Player_1.field_Private_HashSet_1_UnityAction_1_T_0.Add(new Action<VRC.Player>(NotificationHandler.LeaveNotify));
-            
-            
-            
+
+
+
             VRCWebSocketsManager.field_Private_Static_VRCWebSocketsManager_0.field_Private_Api_0.PostOffice.add_OnNotification(DelegateSupport.ConvertDelegate<Il2CppSystem.EventHandler<NotificationEvent>>(new Action<Il2CppSystem.Object, NotificationEvent>(NotificationHandler.NotificationNotify)));
-            
-            
-            
+
+
+
             welcomed = true;
             favList = new AvatarList("Heavenly Favorites");
             searchList = new AvatarList("Heavenly Search");
@@ -283,6 +348,7 @@ namespace Heavenly
                 foreach (HevApiAvatar avi in JsonConvert.DeserializeObject<List<HevApiAvatar>>(File.ReadAllText("Heavenly\\HeavenlyFavorites.txt")))
                 {
                     favList.UpdateAvatarFavList(avi.ToApiAvatar());
+                    yield return null;
                 }
             }
             else
@@ -324,24 +390,136 @@ namespace Heavenly
 
             ButtonHandler.SetButtonColor(searchAvatarsButton, Color.red);
             searchAvatarsButton.GetComponentInChildren<Button>().onClick = new Button.ButtonClickedEvent();
-            var searchAvis = DelegateSupport.ConvertDelegate<Il2CppSystem.Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>>(new Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>((str, LK, tex) => { MelonCoroutines.Start(searchList.AddSearchAvatars(CU.SearchAvatars(str))); }));
-            searchAvatarsButton.GetComponentInChildren<Button>().onClick.AddListener(new Action(() => { UIU.OpenKeyboardPopup("Search Avatars", "Enter Author/Avatar name.....", searchAvis); }));
+
+            searchAvatarsButton.GetComponentInChildren<Button>().onClick.AddListener(new Action(() =>
+            {
+                UIU.OpenKeyboardPopup("Search Avatars", "Enter Author/Avatar name.....", (str, LK, tex) =>
+                {
+                    MelonCoroutines.Start(searchList.AddSearchAvatars(CU.SearchAvatars(str)));
+                });
+            }));
 
 
             ButtonHandler.GetCloneAvatarButton().GetComponentInChildren<Button>().onClick = new Button.ButtonClickedEvent();
-            ButtonHandler.GetCloneAvatarButton().GetComponentInChildren<Button>().onClick.AddListener(new Action(() => { PU.ForceClone(PU.GetQuickMenu().field_Private_Player_0.prop_ApiAvatar_0); }));
 
+            ButtonHandler.GetCloneAvatarButton().GetComponentInChildren<Button>().onClick.AddListener(new Action(() =>
+            {
+                PU.ForceClone(UIU.GetQuickMenu().field_Private_Player_0.prop_ApiAvatar_0);
+            }));
+
+            foreach (Button button in ButtonHandler.GetShortcutMenu().GetComponentsInChildren<Button>())
+            {
+                ButtonHandler.SetButtonColor(button.gameObject, Color.red);
+                button.GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HexButton.png");
+                yield return null;
+            }
+
+            foreach (Button button in ButtonHandler.GetUserInteractMenu().GetComponentsInChildren<Button>())
+            {
+                ButtonHandler.SetButtonColor(button.gameObject, Color.red);
+                yield return null;
+            }
+
+            ButtonHandler.SetButtonColor(QMStuff.ToggleButtonTemplate(), Color.red);
+            ButtonHandler.GetBlockButton().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HexButton.png");
+            ButtonHandler.GetBlockButtonOFF().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HexToggleOFF.png");
+            ButtonHandler.GetBlockButtonON().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HexToggleON.png");
+            ButtonHandler.GetBlockButtonOFF().GetComponentInChildren<Image>().color = Color.red;
+            ButtonHandler.GetBlockButtonON().GetComponentInChildren<Image>().color = Color.red;
 
             //var fuck = GameObject.Instantiate(ButtonHandler.GetQuickMenuNotifTab(), ButtonHandler.GetQuickMenuNotifTab().transform.parent);
-            var forceClone = DelegateSupport.ConvertDelegate<Il2CppSystem.Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>>(new Action<string, Il2CppSystem.Collections.Generic.List<KeyCode>, Text>((str, LK, tex) => { PU.ForceCloneByID(str); }));
-            mainMenu = new QMNestedButton("ShortcutMenu", 0, 0, "Heavenly", "Main Menu", Color.red);
-            searchBotButton = new QMSingleButton(mainMenu, 1, 0, "Search For\nPlayer", delegate {  }, "Search for a player in public worlds", Color.red);
-            forceCloneIdButton = new QMSingleButton(mainMenu, 2, 0, "Force Clone\nby ID", delegate { UIU.OpenKeyboardPopup("Force Clone ID", "Enter Avatar ID.....", forceClone); }, "Force clone an avatar by the avatar ID", Color.red);
+            mainMenu = new QMNestedButton("ShortcutMenu", 2.50f, 0.86f, "", "Main Menu", Color.red);
+            mainMenu.getMainButton().getGameObject().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HeavenlyButton.png");
+            searchBotButton = new QMSingleButton(mainMenu, 1, 0, "Search For\nPlayer", delegate { }, "Search for a player in public worlds", Color.red);
 
-            //foreach (Component com in fuck.GetComponentsInChildren<Component>())
-            //{
-            //    CU.Log(com.ToString());
-            //}
+            forceCloneIdButton = new QMSingleButton(mainMenu, 2, 0, "Force Clone\nby ID", delegate
+            {
+                UIU.OpenKeyboardPopup("Force Clone ID", "Enter Avatar ID.....", (str, LK, tex) =>
+                {
+                    PU.ForceCloneByID(str);
+                });
+            }, "Force clone an avatar by the avatar ID", Color.red);
+
+            restartButton = new QMSingleButton(mainMenu, 3, 0, "Restart Game", delegate { CU.RestartGame(); }, "Restart VRChat", Color.red);
+            restartRejoinButton = new QMSingleButton(mainMenu, 4, 0, "Restart and\n Rejoin Game", delegate { CU.RestartRejoinGame(); }, "Restart VRChat and rejoin your current lobby", Color.red);
+
+            flyToggleButton = new QMToggleButton("ShortcutMenu", 0.25f, 0.4225f, "Fly ON", delegate
+            {
+                directFly = true;
+                PU.GetVRCPlayer().GetComponent<CharacterController>().enabled = false;
+                Physics.gravity = Vector3.zero;
+            },
+            "Fly OFF", delegate
+            {
+                PU.GetVRCPlayer().GetComponent<CharacterController>().enabled = true;
+                Physics.gravity = defaultGravity;
+                directFly = false;
+            },
+            "Restart VRChat and rejoin your current lobby", Color.red);
+
+            espToggleButton = new QMToggleButton("ShortcutMenu", 0.25f, 1.275f, "ESP ON", delegate
+            {
+
+            },
+            "ESP OFF", delegate
+            {
+
+            },
+            "Restart VRChat and rejoin your current lobby", Color.red);
+
+
+            ButtonHandler.GetGoHomeButton().GetComponent<RectTransform>().anchoredPosition += new Vector2(0, 60);
+            ButtonHandler.GetUIElementsButton().GetComponent<RectTransform>().anchoredPosition += new Vector2(0, 120);
+            ButtonHandler.GetAvatarButton().GetComponent<RectTransform>().anchoredPosition -= new Vector2(105, 180);
+            ButtonHandler.GetRespawnButton().GetComponent<RectTransform>().anchoredPosition -= new Vector2(105, 120);
+            ButtonHandler.GetCameraButton().GetComponent<RectTransform>().anchoredPosition += new Vector2(210, 120);
+            ButtonHandler.GetSocialButton().GetComponent<RectTransform>().anchoredPosition -= new Vector2(210, 0);
+            ButtonHandler.GetEmoteButton().GetComponent<RectTransform>().anchoredPosition += new Vector2(105, 300);
+            ButtonHandler.GetEmojiButton().GetComponent<RectTransform>().anchoredPosition += new Vector2(0, 120);
+            ButtonHandler.GetSettingsButton().GetComponent<RectTransform>().anchoredPosition += new Vector2(0, 60);
+            ButtonHandler.GetReportWorldButton().GetComponent<RectTransform>().anchoredPosition += new Vector2(-735, 240);
+            ButtonHandler.GetQuickMenuBackground().GetComponent<RectTransform>().localScale += new Vector3(0.5f, 0, 0);
+
+            ButtonHandler.GetGalleryButton().GetComponent<RectTransform>().anchoredPosition -= new Vector2(105, 180);
+            ButtonHandler.GetLearnMoreButton().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HexHighlightButton.png");
+            ButtonHandler.SetButtonColor(ButtonHandler.GetLearnMoreButton(), Color.red);
+
+            ButtonHandler.GetSitButton().GetComponent<RectTransform>().anchoredPosition += new Vector2(735, -120);
+            ButtonHandler.GetSitOFFText().transform.localPosition -= new Vector3(37.5f, 0, 0);
+            ButtonHandler.GetSitONText().transform.localPosition -= new Vector3(37.5f, 0, 0);
+            ButtonHandler.GetSitOFF().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HexToggleOFF.png");
+            ButtonHandler.GetSitON().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HexToggleON.png");
+            ButtonHandler.GetSitOFF().GetComponentInChildren<Image>().color = Color.red;
+            ButtonHandler.GetSitON().GetComponentInChildren<Image>().color = Color.red;
+            GameObject.Destroy(ButtonHandler.GetSitOFFImage());
+            GameObject.Destroy(ButtonHandler.GetSitONImage());
+
+            ButtonHandler.GetMicControls().GetComponent<RectTransform>().anchoredPosition -= new Vector2(200, 0);
+
+            GameObject.Destroy(ButtonHandler.GetGalleryButtonVRCTag());
+
+            VRCUiCursorManager.field_Private_Static_VRCUiCursorManager_0.field_Public_VRCUiCursor_0.field_Public_Color_0 = Color.red / 1.4f;
+            VRCUiCursorManager.field_Private_Static_VRCUiCursorManager_0.field_Public_VRCUiCursor_0.field_Public_Color_1 = Color.red / 1.4f;
+            VRCUiCursorManager.field_Private_Static_VRCUiCursorManager_0.field_Public_VRCUiCursor_0.field_Public_Color_2 = Color.red / 1.4f;
+
+        }
+
+        public static void ToggleSitOnHead()
+        {
+            sittingOnHead = !sittingOnHead;
+            MelonCoroutines.Start(HeadSit());
+        }
+
+        public static IEnumerator HeadSit()
+        {
+            while (sittingOnHead)
+            {
+                if (selectedSit == null)
+                    yield break;
+
+                PU.GetVRCPlayer().transform.position = selectedSit.field_Private_VRCPlayerApi_0.GetBonePosition(UnityEngine.HumanBodyBones.Head) + new Vector3(0, 0.1f, 0);
+                yield return null;
+            }
         }
     }
 }

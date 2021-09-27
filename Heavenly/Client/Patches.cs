@@ -2,11 +2,13 @@
 using HarmonyLib;
 using Heavenly.VRChat;
 using Heavenly.VRChat.Utilities;
+using Heavenly.Client.Utilities;
 using Heavenly.VRChat.Handlers;
 using Photon.Realtime;
 using System.Reflection;
 using UnityEngine.UI;
 using UnityEngine;
+using VRC.Networking;
 
 namespace Heavenly.Client
 {
@@ -21,6 +23,7 @@ namespace Heavenly.Client
         public static void ApplyPatches()
         {
             Instance = new HarmonyLib.Harmony("HeavenlyPatches");
+            Instance.Patch(typeof(UdonSync).GetMethod("UdonSyncRunProgramAsRPC"), GetLocalPatch("NewUdonSyncRunProgramAsRPC"));
             Instance.Patch(typeof(LoadBalancingClient).GetMethod("Method_Public_Virtual_New_Boolean_Byte_Object_RaiseEventOptions_SendOptions_0"), GetLocalPatch("NewRaiseEvent"));
             Instance.Patch(typeof(UiAvatarList).GetMethod("OnEnable"), GetLocalPatch("NewOnEnable"));
             Instance.Patch(typeof(QuickMenu).GetMethod("LateUpdate"), GetLocalPatch("NewQuickMenuLateUpdate"));
@@ -38,16 +41,22 @@ namespace Heavenly.Client
 
         }
 
+        private static bool NewUdonSyncRunProgramAsRPC(string __0, VRC.Player __1)
+        {
+            CU.Log($"{__0} was called by {__1.field_Private_APIUser_0.displayName}");
+            return true;
+        }
+
         private static bool NewQuickMenuLateUpdate()
         {
-            if (PU.GetQuickMenu() == null)
+            if (UIU.GetQuickMenu() == null)
                 return true;
 
-            if (PU.GetQuickMenu().field_Private_Player_0 == null)
+            if (UIU.GetQuickMenu().field_Private_Player_0 == null)
                 return true;
 
 
-            if (PU.GetQuickMenu().field_Private_Player_0.prop_ApiAvatar_0.releaseStatus.ToLower() == "private")
+            if (UIU.GetQuickMenu().field_Private_Player_0.prop_ApiAvatar_0.releaseStatus.ToLower() == "private")
             {
                 ButtonHandler.GetCloneAvatarButton().GetComponentInChildren<Button>().GetComponentInChildren<Text>().text = "Private";
                 ButtonHandler.GetCloneAvatarButton().GetComponentInChildren<Button>().GetComponentInChildren<Text>().color = Color.red;

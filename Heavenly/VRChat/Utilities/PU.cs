@@ -1,5 +1,7 @@
 ﻿using Heavenly.Client;
 using Heavenly.Client.API;
+using Heavenly.Client.Utilities;
+using Heavenly.VRChat.Handlers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,11 +20,6 @@ namespace Heavenly.VRChat.Utilities
     public static class PU
     {
 
-        public static QuickMenu GetQuickMenu()
-        {
-            return QuickMenu.field_Private_Static_QuickMenu_0;
-        }
-
         public static VRCPlayer GetVRCPlayer()
         {
             return VRCPlayer.field_Internal_Static_VRCPlayer_0;
@@ -38,6 +35,11 @@ namespace Heavenly.VRChat.Utilities
             return GetVRCPlayer().field_Private_VRCPlayerApi_0;
         }
 
+        public static Player GetSelectedPlayer()
+        {
+            return UIU.GetQuickMenu().field_Private_Player_0;
+        }
+
         public static void DownloadAvatar(ApiAvatar avatar)
         {
             if (!Directory.Exists("Heavenly\\Avatars"))
@@ -48,7 +50,6 @@ namespace Heavenly.VRChat.Utilities
             client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36 OPR/77.0.4054.298");
             client.Headers.Add("Cookie", "auth=" + ApiCredentials.authToken);
             client.DownloadFileAsync(new Uri(avatar.assetUrl), $"Heavenly\\Avatars\\{avatar.name}-{avatar.id}-{avatar.authorName}.vrca");
-
         }
 
         public static void ForceClone(ApiAvatar avatar)
@@ -65,7 +66,7 @@ namespace Heavenly.VRChat.Utilities
             {
                 field_Internal_ApiAvatar_0 = avatar
             };
-                
+
             page.ChangeToSelectedAvatar();
         }
 
@@ -85,6 +86,11 @@ namespace Heavenly.VRChat.Utilities
         public static ApiAvatar ToApiAvatar(this HevApiAvatar avi)
         {
             return new ApiAvatar() { name = avi.name, id = avi.id, authorName = avi.authorName, authorId = avi.authorId, thumbnailImageUrl = avi.thumbnailImageUrl, assetUrl = avi.assetUrl };
+        }
+
+        public static void RequestToTagAlong(Player player)
+        {
+            WebsocketHandler.tagAlongSocket.Send($"{PU.GetPlayer().field_Private_APIUser_0.displayName}={PU.GetPlayer().field_Private_APIUser_0.id}={player.field_Private_APIUser_0.id}=request=null");
         }
 
         //public static async void ReuploadAvatar(ApiAvatar avatar)
