@@ -88,10 +88,17 @@ namespace Heavenly.Client.Utilities
 
         public static List<HevApiAvatar> SearchAvatars(string name)
         {
-            using (WebClient client = new WebClient())
+            if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrEmpty(name) && name.Length > 2)
             {
-                var jsonString = client.DownloadString($"https://www.heavenlyclient.com/api/avatars?name={name}");
-                return JsonConvert.DeserializeObject<List<HevApiAvatar>>(jsonString);
+                using (WebClient client = new WebClient())
+                {
+                    var jsonString = client.DownloadString($"https://www.heavenlyclient.com/api/avatars?name={name}");
+                    return JsonConvert.DeserializeObject<List<HevApiAvatar>>(jsonString);
+                }
+            }
+            else
+            {
+                return new List<HevApiAvatar>();
             }
         }
 

@@ -19,7 +19,6 @@ namespace Heavenly.VRChat.Handlers
         {
             return GameObject.Find("/UserInterface/QuickMenu/QuickMenu_NewElements/_Background/Panel");
         }
-
         public static GameObject GetCloneAvatarButton()
         {
             return GameObject.Find("/UserInterface/QuickMenu/UserInteractMenu/CloneAvatarButton");
@@ -36,12 +35,14 @@ namespace Heavenly.VRChat.Handlers
         {
             return GameObject.Find("/UserInterface/MenuContent/Screens/Avatar/Change Button");
         }
-
+        public static GameObject GetViewUserOnVRChatWebsiteButton()
+        {
+            return GameObject.Find("/UserInterface/MenuContent/Screens/UserInfo/ViewUserOnVRChatWebsiteButton");
+        }
         public static GameObject GetOriginalAvatarFavoriteButton()
         {
             return GameObject.Find("/UserInterface/MenuContent/Screens/Avatar/Favorite Button");
         }
-
         public static GameObject GetAvatarStatsButton()
         {
             return GameObject.Find("/UserInterface/MenuContent/Screens/Avatar/Stats Button");

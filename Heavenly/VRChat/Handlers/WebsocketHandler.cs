@@ -77,6 +77,7 @@ namespace Heavenly.VRChat.Handlers
                         beingTaggedAlong = true;
                         taggedUserId = requestingId;
                         tagAlongSocket.Send($"{PU.GetPlayer().field_Private_APIUser_0.displayName}={PU.GetPlayer().field_Private_APIUser_0.id}={requestingId}=response=null");
+                        UIU.CloseVRCUI();
                     }), "Decline");
                 }));
             }
@@ -102,7 +103,7 @@ namespace Heavenly.VRChat.Handlers
 
         public static void SendTagAlongUpdate()
         {
-            tagAlongSocket.Send($"{PU.GetPlayer().field_Private_APIUser_0.displayName}={PU.GetPlayer().field_Private_APIUser_0.id}={taggedUserId}=update={WU.BuildInstanceID()}");
+            RunOnMainThread(new Action(() => { tagAlongSocket.Send($"{PU.GetPlayer().field_Private_APIUser_0.displayName}={PU.GetPlayer().field_Private_APIUser_0.id}={taggedUserId}=update={WU.BuildInstanceID()}"); }));
         }
 
         public static void RunOnMainThread(Action action)

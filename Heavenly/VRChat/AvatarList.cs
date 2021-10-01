@@ -20,6 +20,8 @@ namespace Heavenly.VRChat
         public GameObject gameObject;
         public GameObject originObject = GameObject.Find("/UserInterface/MenuContent/Screens/Avatar/Vertical Scroll View/Viewport/Content/Public Avatar List");
 
+        public string searchQuery = "NULL";
+
         public UiAvatarList vrcAvatarList;
 
         public Text text;
@@ -57,9 +59,9 @@ namespace Heavenly.VRChat
             vrcAvatarList.isOffScreen = false;
             vrcAvatarList.enabled = true;
 
-            avatars.Insert(0, avatar);
+            avatars.Add(avatar);
 
-            hAvatars.Insert(0, new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.thumbnailImageUrl, avatar.assetUrl));
+            hAvatars.Add(new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.thumbnailImageUrl, avatar.assetUrl));
 
             vrcAvatarList.Method_Protected_Void_List_1_T_Int32_Boolean_VRCUiContentButton_0<ApiAvatar>(avatars);
 
@@ -82,7 +84,7 @@ namespace Heavenly.VRChat
 
             vrcAvatarList.Method_Protected_Void_List_1_T_Int32_Boolean_VRCUiContentButton_0<ApiAvatar>(resAvis);
 
-            text.text = $"{name} - {resAvis.Count} Results";
+            text.text = $"{name} - {resAvis.Count} Results for {searchQuery}";
 
         }
 

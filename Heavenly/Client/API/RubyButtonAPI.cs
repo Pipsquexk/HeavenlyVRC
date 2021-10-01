@@ -25,7 +25,7 @@ namespace RubyButtonAPI
     public static class QMButtonAPI
     {
         //REPLACE THIS STRING SO YOUR MENU DOESNT COLLIDE WITH OTHER MENUS
-        public static string identifier = "REPLACEME";
+        public static string identifier = "Hev";
         public static Color mBackground = Color.red;
         public static Color mForeground = Color.white;
         public static Color bBackground = Color.red;
@@ -165,7 +165,8 @@ namespace RubyButtonAPI
                 disabledColor = Color.grey,
                 highlightedColor = buttonBackgroundColor * 1.5f,
                 normalColor = buttonBackgroundColor / 1.5f,
-                pressedColor = Color.grey * 1.5f
+                pressedColor = Color.grey * 1.5f,
+                selectedColor = buttonBackgroundColor * 1.2f
             };
         }
 
@@ -411,6 +412,8 @@ namespace RubyButtonAPI
     }
     public class QMStuff
     {
+        private static GameObject SingleSliderReference;
+
         // Internal cache of the BoxCollider Background for the Quick Menu
         private static BoxCollider QuickMenuBackgroundReference;
 
@@ -429,8 +432,12 @@ namespace RubyButtonAPI
         // Internal cache of the VRCUiManager
         private static VRCUiManager vrcuimInstance;
 
-
-
+        public static GameObject SingleSliderTemplate()
+        {
+            if (SingleSliderReference == null)
+                SingleSliderReference = GameObject.Find("/UserInterface/MenuContent/Screens/Settings/AudioDevicePanel/VolumeSlider").gameObject;
+            return SingleSliderReference;
+        }
         // Fetch the background from the Quick Menu
         public static BoxCollider QuickMenuBackground()
         {

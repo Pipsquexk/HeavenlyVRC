@@ -19,8 +19,53 @@ namespace Heavenly.VRChat.Handlers
                 WebsocketHandler.SendTagAlongUpdate();
             }
 
+            if (Main.esp)
+            {
+                if (p.transform.Find("SelectRegion"))
+                {
+                    if (p.field_Private_APIUser_0.isFriend)
+                    {
+                        Main.friendsFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<SkinnedMeshRenderer>(), true);
+                        Main.friendsFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<Renderer>(), true);
+                        Main.friendsFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<MeshRenderer>(), true);
+                    }
+                    else if (p.field_Private_APIUser_0.hasVeteranTrustLevel)
+                    {
+                        Main.trustedFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<SkinnedMeshRenderer>(), true);
+                        Main.trustedFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<Renderer>(), true);
+                        Main.trustedFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<MeshRenderer>(), true);
+                    }
+                    else if (p.field_Private_APIUser_0.hasTrustedTrustLevel)
+                    {
+                        Main.knownFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<SkinnedMeshRenderer>(), true);
+                        Main.knownFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<Renderer>(), true);
+                        Main.knownFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<MeshRenderer>(), true);
+                    }
+                    else if (p.field_Private_APIUser_0.hasKnownTrustLevel)
+                    {
+                        Main.userFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<SkinnedMeshRenderer>(), true);
+                        Main.userFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<Renderer>(), true);
+                        Main.userFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<MeshRenderer>(), true);
+                    }
+                    else if (p.field_Private_APIUser_0.hasBasicTrustLevel)
+                    {
+                        Main.newUserFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<SkinnedMeshRenderer>(), true);
+                        Main.newUserFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<Renderer>(), true);
+                        Main.newUserFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<MeshRenderer>(), true);
+                    }
+                    else
+                    {
+                        Main.visitorFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<SkinnedMeshRenderer>(), true);
+                        Main.visitorFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<Renderer>(), true);
+                        Main.visitorFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<MeshRenderer>(), true);
+                    }
+                }
+            }
+
             if (p.field_Private_APIUser_0.id == myId || Main.nConfig.UseNotifs == false)
                 return;
+
+            
 
             MelonCoroutines.Start(Join());
         }
@@ -29,6 +74,7 @@ namespace Heavenly.VRChat.Handlers
         {
             if (p.field_Private_APIUser_0.id == myId || Main.nConfig.UseNotifs == false)
                 return;
+
 
             MelonCoroutines.Start(Leave());
         }
