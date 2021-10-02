@@ -16,7 +16,7 @@ namespace Heavenly.VRChat.Utilities
 {
     public static class PU
     {
-
+        public static string lastLobbyId = "NULL", currentLobbyId = "NULL";
         public static VRCPlayer GetVRCPlayer()
         {
             return VRCPlayer.field_Internal_Static_VRCPlayer_0;
@@ -89,6 +89,24 @@ namespace Heavenly.VRChat.Utilities
         public static void RequestToTagAlong(string tagId)
         {
             WebsocketHandler.tagAlongSocket.Send($"{PU.GetPlayer().field_Private_APIUser_0.displayName}={PU.GetPlayer().field_Private_APIUser_0.id}={tagId}=request=null");
+        }
+
+        public static void CancelTagAlong()
+        {
+            if(WebsocketHandler.taggedUserId != null)
+            {
+                WebsocketHandler.tagAlongSocket.Send($"{PU.GetPlayer().field_Private_APIUser_0.displayName}={PU.GetPlayer().field_Private_APIUser_0.id}={WebsocketHandler.taggedUserId}=cancel=null");
+            }
+            if (WebsocketHandler.taggingUserId != null)
+            {
+                WebsocketHandler.tagAlongSocket.Send($"{PU.GetPlayer().field_Private_APIUser_0.displayName}={PU.GetPlayer().field_Private_APIUser_0.id}={WebsocketHandler.taggingUserId}=cancel=null");
+            }
+            Main.taggedUserLabel.setText("<color=white>Tagged User: </color><color=red>NULL</color>");
+            Main.taggingUserLabel.setText("<color=white>Tagging User: </color><color=red>NULL</color>");
+            Main.selectedTaggedUserLabel.setText("<color=white>Tagged User: </color><color=red>NULL</color>");
+            Main.selectedTaggingUserLabel.setText("<color=white>Tagging User: </color><color=red>NULL</color>");
+            WebsocketHandler.taggingAlong = false;
+            WebsocketHandler.beingTaggedAlong = false;
         }
 
         public static void ToggleESP(bool state)

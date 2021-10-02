@@ -32,7 +32,7 @@ namespace Heavenly
         public static QMNestedButton mainMenu, gameMenu, photonMenu, avatarMenu, voiceMenu, sitMenu, espMenu, tagAlongMenu;
         public static QMNestedButton selectedMenu, selectedAvatarMenu, selectedTagAlongMenu;
 
-        public static QMSingleButton searchBotButton, forceCloneIdButton, restartButton, restartRejoinButton, cancelTagAlongButton;
+        public static QMSingleButton searchBotButton, forceCloneIdButton, restartButton, restartRejoinButton, rejoinCurrentLobbyButton, rejoinLastLobbyButton, cancelTagAlongButton;
         public static QMSingleButton selectedDownloadVrcaButton, selectedTagAlongButton;
 
         public static List<QMSingleButton> sitOptionButtons = new List<QMSingleButton>();
@@ -42,6 +42,8 @@ namespace Heavenly
         public static QMToggleButton flyToggleButton, espToggleButton, serializeToggleButton, serializePosToggleButton, playerESPToggleButton, itemESPToggleButton, triggerESPToggleButton;
 
         public static VRCSlider voiceGainSlider, othersVoiceGainSlider;
+
+        public static VRCLabel taggedUserLabel, taggingUserLabel, selectedTaggedUserLabel, selectedTaggingUserLabel;
 
         public static Vector3 serPos;
         public static Quaternion serRot;
@@ -71,7 +73,7 @@ namespace Heavenly
             esp = false;
 
         public static bool serialize = false, 
-            useResetPosSer;
+            useResetPosSer = false;
 
         public GameObject monkeGO;
 
@@ -475,12 +477,14 @@ namespace Heavenly
 
             #region Main Menu
 
-            gameMenu = new QMNestedButton(mainMenu, 0.25f, 0.4225f, "Game", "VRChat Client Options", Color.red);
+            gameMenu = new QMNestedButton(mainMenu, 0.25f, 0.4225f, "Game", "VRChat Options", Color.red);
 
             #region Game Menu
 
-            restartButton = new QMSingleButton(gameMenu, 0.25f, 0.4225f, "Restart Game", delegate { CU.RestartGame(); }, "Restart VRChat", Color.red);
-            restartRejoinButton = new QMSingleButton(gameMenu, 0.25f, 1.275f, "Restart and\n Rejoin Game", delegate { CU.RestartRejoinGame(); }, "Restart VRChat and rejoin your current lobby", Color.red);
+            rejoinCurrentLobbyButton = new QMSingleButton(gameMenu, 0.25f, 0.4225f, "Rejoin\nCurrent", delegate { Networking.GoToRoom(PU.currentLobbyId); }, "Rejoin the lobby you are currently in", Color.red);
+            rejoinLastLobbyButton = new QMSingleButton(gameMenu, 0.25f, 1.275f, "Rejoin\nLast", delegate { Networking.GoToRoom(PU.lastLobbyId); }, "Rejoin the last lobby you were in", Color.red);
+            restartButton = new QMSingleButton(gameMenu, 1f, 0f, "Restart Game", delegate { CU.RestartGame(); }, "Restart VRChat", Color.red);
+            restartRejoinButton = new QMSingleButton(gameMenu, 1f, 0.86f, "Restart and\n Rejoin Game", delegate { CU.RestartRejoinGame(); }, "Restart VRChat and rejoin your current lobby", Color.red);
 
             #endregion
 
@@ -740,8 +744,11 @@ namespace Heavenly
 
             cancelTagAlongButton = new QMSingleButton(tagAlongMenu, 0.25f, 0.4225f, "Cancel\nTag Along", delegate
             {
-                
+                PU.CancelTagAlong();
             }, "Cancel anyone you are being tagged along with, and who you are tagging along with", Color.red);
+
+            taggedUserLabel = new VRCLabel(tagAlongMenu, new Vector2(-3, 2), "<color=white>Tagged User: </color><color=red>NULL</color>");
+            taggingUserLabel = new VRCLabel(tagAlongMenu, new Vector2(-3, 1.4f), "<color=white>Tagging User: </color><color=red>NULL</color>");
 
             #endregion
 
@@ -925,7 +932,8 @@ namespace Heavenly
             #region Selected Tag Along Menu
 
             selectedTagAlongButton = new QMSingleButton(selectedTagAlongMenu, 0.25f, 0.4225f, "Request\nTag Along", delegate { PU.RequestToTagAlong(PU.GetSelectedPlayer().field_Private_APIUser_0.id); }, "Request to 'Tag Along' with selected player to other worlds", Color.red);
-
+            selectedTaggedUserLabel = new VRCLabel(selectedTagAlongMenu, new Vector2(-3, 2), "<color=white>Tagged User: </color><color=red>NULL</color>");
+            selectedTaggingUserLabel = new VRCLabel(selectedTagAlongMenu, new Vector2(-3, 1.4f), "<color=white>Tagging User: </color><color=red>NULL</color>");
             #endregion
 
             #endregion

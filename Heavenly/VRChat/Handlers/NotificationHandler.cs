@@ -14,9 +14,18 @@ namespace Heavenly.VRChat.Handlers
         {
             myId = PU.GetPlayer().field_Private_APIUser_0.id;
 
-            if(p.field_Private_APIUser_0.id == myId && WebsocketHandler.beingTaggedAlong)
+            if (p.field_Private_APIUser_0.id == myId)
             {
-                WebsocketHandler.SendTagAlongUpdate();
+                if(PU.currentLobbyId != WU.BuildInstanceID())
+                {
+                    PU.lastLobbyId = PU.currentLobbyId;
+                    PU.currentLobbyId = WU.BuildInstanceID();
+                }
+                
+                if (WebsocketHandler.beingTaggedAlong)
+                {
+                    WebsocketHandler.SendTagAlongUpdate();
+                }
             }
 
             if (Main.esp)

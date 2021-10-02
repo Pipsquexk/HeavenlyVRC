@@ -26,7 +26,7 @@ namespace Heavenly.Client.API
 
         private void initButton(String menu, Vector2 location, Vector4 sliderValues, String sliderLabel, System.Action<float> onValueChanged, Color? labelColor = null)
         {
-            var origSlider = VRCUiManager.prop_VRCUiManager_0.field_Public_GameObject_0.transform.Find("/Screens/Settings/AudioDevicePanel/VolumeSlider");
+            //var origSlider = VRCUiManager.prop_VRCUiManager_0.field_Public_GameObject_0.transform.Find("/Screens/Settings/AudioDevicePanel/VolumeSlider");
 
             var origText = RubyButtonAPI.QMStuff.GetQuickMenuInstance().transform.Find($"{menu}/SingleButton(5,2)").GetComponentInChildren<Text>();
 

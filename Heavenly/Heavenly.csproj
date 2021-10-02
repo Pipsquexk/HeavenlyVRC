@@ -205,6 +205,7 @@
     <Compile Include="Client\API\KeyConfig.cs" />
     <Compile Include="Client\API\HevApiAvatar.cs" />
     <Compile Include="Client\API\RubyButtonAPI.cs" />
+    <Compile Include="Client\API\VRCLabel.cs" />
     <Compile Include="Client\API\VRCSlider.cs" />
     <Compile Include="Client\Utilities\ApiFileHelper.cs" />
     <Compile Include="Client\Utilities\CU.cs" />

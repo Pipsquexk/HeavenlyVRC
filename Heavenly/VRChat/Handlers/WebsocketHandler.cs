@@ -16,6 +16,10 @@ namespace Heavenly.VRChat.Handlers
         public static bool taggingAlong = false;
 
         public static string taggedUserId = null;
+        public static string taggingUserId = null;
+
+        public static string taggedName = null;
+        public static string taggingName = null;
 
         public static WebSocket generalSocket;
         public static WebSocket tagAlongSocket;
@@ -75,8 +79,11 @@ namespace Heavenly.VRChat.Handlers
                     new Action(() =>
                     {
                         beingTaggedAlong = true;
+                        taggedName = requestingName;
                         taggedUserId = requestingId;
                         tagAlongSocket.Send($"{PU.GetPlayer().field_Private_APIUser_0.displayName}={PU.GetPlayer().field_Private_APIUser_0.id}={requestingId}=response=null");
+                        Main.taggedUserLabel.setText($"<color=white>Tagged User: </color><color=green>{requestingName}</color>");
+                        Main.selectedTaggedUserLabel.setText($"<color=white>Tagged User: </color><color=green>{requestingName}</color>");
                         UIU.CloseVRCUI();
                     }), "Decline");
                 }));
@@ -89,7 +96,11 @@ namespace Heavenly.VRChat.Handlers
                     RunOnMainThread(new Action(() =>
                     {
                         taggingAlong = true;
+                        taggingName = requestingName;
+                        taggingUserId = requestingId;
                         UIU.OpenVRCUINotifPopup("Tag Along Response", $"{requestingName} accepted your request to tag along!", "Okay");
+                        Main.taggingUserLabel.setText($"<color=white>Tagging User: </color><color=green>{requestingName}</color>");
+                        Main.selectedTaggingUserLabel.setText($"<color=white>Tagging User: </color><color=green>{requestingName}</color>");
                     }));
                 }
             }
@@ -97,6 +108,20 @@ namespace Heavenly.VRChat.Handlers
             if(type.ToLower() == "update")
             {
                 RunOnMainThread(new Action(() => { if (taggingAlong) { Networking.GoToRoom(instanceId); } }));
+            }
+
+            if (type.ToLower() == "cancel")
+            {
+                RunOnMainThread(new Action(() => 
+                { 
+                    taggingAlong = false; 
+                    beingTaggedAlong = false;
+                    Main.taggedUserLabel.setText("<color=white>Tagged User: </color><color=red>NULL</color>");
+                    Main.taggingUserLabel.setText("<color=white>Tagging User: </color><color=red>NULL</color>");
+                    Main.selectedTaggedUserLabel.setText("<color=white>Tagged User: </color><color=red>NULL</color>");
+                    Main.selectedTaggingUserLabel.setText("<color=white>Tagging User: </color><color=red>NULL</color>");
+                    UIU.OpenVRCUINotifPopup("Tag Along Cancel", $"{requestingName} canceled the tag along!", "Okay");
+                }));
             }
 
         }
