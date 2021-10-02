@@ -113,6 +113,8 @@ namespace Heavenly
             Main.defaultGravity = Physics.gravity;
             WebsocketHandler.ConnectToWebsockets();
             MelonCoroutines.Start(Main.Welcome());
+
+            
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
@@ -941,6 +943,8 @@ namespace Heavenly
             #endregion
 
             playerESPToggleButton.setToggleState(true, true);
+
+            Application.targetFrameRate = 244;
 
         }
 

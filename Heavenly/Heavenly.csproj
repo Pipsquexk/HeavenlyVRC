@@ -218,6 +218,7 @@
     <Compile Include="VRChat\Handlers\ButtonHandler.cs" />
     <Compile Include="VRChat\Handlers\NotificationHandler.cs" />
     <Compile Include="VRChat\Handlers\WebsocketHandler.cs" />
+    <Compile Include="VRChat\Utilities\APIU.cs" />
     <Compile Include="VRChat\Utilities\PU.cs" />
     <Compile Include="VRChat\Utilities\UIU.cs" />
     <Compile Include="VRChat\Utilities\WU.cs" />

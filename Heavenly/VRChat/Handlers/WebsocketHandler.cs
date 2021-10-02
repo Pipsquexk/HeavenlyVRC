@@ -50,7 +50,7 @@ namespace Heavenly.VRChat.Handlers
             if (message.ToLower().Contains("count:"))
             {
                 var playerCount = message.Split(':')[1];
-                Console.Title = $"Heavenly - v1.0 | Online Players: {playerCount}";
+                Console.Title = $"Heavenly - v1.0  ||  Online Heavenly Users: {playerCount}  ||  Online VRChat Players: {APIU.GetOnlineVRChatPlayersCount()}";
             }
             else
             {

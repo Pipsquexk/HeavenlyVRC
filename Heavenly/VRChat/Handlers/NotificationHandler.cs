@@ -4,6 +4,8 @@ using UnityEngine;
 using VRC;
 using MelonLoader;
 using Heavenly.VRChat.Utilities;
+using System;
+using Heavenly.Client.Utilities;
 
 namespace Heavenly.VRChat.Handlers
 {
@@ -12,71 +14,74 @@ namespace Heavenly.VRChat.Handlers
         public static string myId = null;
         public static void JoinNotify(Player p)
         {
-            myId = PU.GetPlayer().field_Private_APIUser_0.id;
-
-            if (p.field_Private_APIUser_0.id == myId)
+            try
             {
-                if(PU.currentLobbyId != WU.BuildInstanceID())
+                myId = PU.GetPlayer().field_Private_APIUser_0.id;
+
+                if (p.field_Private_APIUser_0.id == myId)
                 {
-                    PU.lastLobbyId = PU.currentLobbyId;
-                    PU.currentLobbyId = WU.BuildInstanceID();
+                    if (PU.currentLobbyId != WU.BuildInstanceID())
+                    {
+                        PU.lastLobbyId = PU.currentLobbyId;
+                        PU.currentLobbyId = WU.BuildInstanceID();
+                    }
+
+                    if (WebsocketHandler.beingTaggedAlong)
+                    {
+                        WebsocketHandler.SendTagAlongUpdate();
+                    }
                 }
-                
-                if (WebsocketHandler.beingTaggedAlong)
+
+                if (Main.esp && Main.playerESP)
                 {
-                    WebsocketHandler.SendTagAlongUpdate();
+                    if (p.transform.Find("SelectRegion"))
+                    {
+                        if (p.field_Private_APIUser_0.isFriend)
+                        {
+                            Main.friendsFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("SelectRegion").GetComponent<Renderer>(), true);
+                        }
+                        else if (p.field_Private_APIUser_0.hasVeteranTrustLevel)
+                        {
+                            Main.trustedFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("SelectRegion").GetComponent<Renderer>(), true);
+                        }
+                        else if (p.field_Private_APIUser_0.hasTrustedTrustLevel)
+                        {
+                            Main.knownFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("SelectRegion").GetComponent<Renderer>(), true);
+                        }
+                        else if (p.field_Private_APIUser_0.hasKnownTrustLevel)
+                        {
+                            Main.userFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("SelectRegion").GetComponent<Renderer>(), true);
+                        }
+                        else if (p.field_Private_APIUser_0.hasBasicTrustLevel)
+                        {
+                            Main.newUserFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("SelectRegion").GetComponent<Renderer>(), true);
+                        }
+                        else
+                        {
+                            Main.visitorFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("SelectRegion").GetComponent<Renderer>(), true);
+                        }
+                    }
+                }
+
+                if (p.field_Private_APIUser_0.id == myId || Main.nConfig.UseNotifs == false)
+                    return;
+
+
+
+                MelonCoroutines.Start(Join());
+            }
+            catch (Exception ex)
+            {
+                if (ex.GetType() == typeof(NullReferenceException))
+                {
+                    CU.Log(ConsoleColor.Yellow, "Something with join notifications is wrong. More Specifically, something is empty. Please submit a support ticket at https://discord.gg/APz5CANAvt in the #support-tickets channel with a screenshot of this.");
+                }
+                else
+                {
+                    CU.Log(ConsoleColor.Yellow, "Something with join notifications is wrong. Please submit a support ticket at https://discord.gg/APz5CANAvt in the #support-tickets channel with a screenshot of the following.");
+                    CU.Log(ConsoleColor.Red, ex.ToString());
                 }
             }
-
-            if (Main.esp)
-            {
-                if (p.transform.Find("SelectRegion"))
-                {
-                    if (p.field_Private_APIUser_0.isFriend)
-                    {
-                        Main.friendsFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<SkinnedMeshRenderer>(), true);
-                        Main.friendsFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<Renderer>(), true);
-                        Main.friendsFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<MeshRenderer>(), true);
-                    }
-                    else if (p.field_Private_APIUser_0.hasVeteranTrustLevel)
-                    {
-                        Main.trustedFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<SkinnedMeshRenderer>(), true);
-                        Main.trustedFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<Renderer>(), true);
-                        Main.trustedFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<MeshRenderer>(), true);
-                    }
-                    else if (p.field_Private_APIUser_0.hasTrustedTrustLevel)
-                    {
-                        Main.knownFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<SkinnedMeshRenderer>(), true);
-                        Main.knownFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<Renderer>(), true);
-                        Main.knownFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<MeshRenderer>(), true);
-                    }
-                    else if (p.field_Private_APIUser_0.hasKnownTrustLevel)
-                    {
-                        Main.userFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<SkinnedMeshRenderer>(), true);
-                        Main.userFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<Renderer>(), true);
-                        Main.userFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<MeshRenderer>(), true);
-                    }
-                    else if (p.field_Private_APIUser_0.hasBasicTrustLevel)
-                    {
-                        Main.newUserFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<SkinnedMeshRenderer>(), true);
-                        Main.newUserFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<Renderer>(), true);
-                        Main.newUserFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<MeshRenderer>(), true);
-                    }
-                    else
-                    {
-                        Main.visitorFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<SkinnedMeshRenderer>(), true);
-                        Main.visitorFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<Renderer>(), true);
-                        Main.visitorFX.Method_Public_Void_Renderer_Boolean_0(p.transform.Find("ForwardDirection/Avatar").GetComponentInChildren<MeshRenderer>(), true);
-                    }
-                }
-            }
-
-            if (p.field_Private_APIUser_0.id == myId || Main.nConfig.UseNotifs == false)
-                return;
-
-            
-
-            MelonCoroutines.Start(Join());
         }
 
         public static void LeaveNotify(Player p)
