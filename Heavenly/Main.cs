@@ -29,6 +29,10 @@ namespace Heavenly
 
         public static HighlightsFXStandalone friendsFX, trustedFX, knownFX, userFX, newUserFX, visitorFX;
 
+        public static QMTabButton debugTab;
+
+        public static HevList debugList;
+
         public static QMNestedButton mainMenu, gameMenu, photonMenu, avatarMenu, voiceMenu, sitMenu, espMenu, tagAlongMenu;
         public static QMNestedButton selectedMenu, selectedAvatarMenu, selectedTagAlongMenu;
 
@@ -53,7 +57,7 @@ namespace Heavenly
         public static AvatarList favList;
         public static AvatarList searchList;
 
-        public static AssetBundle notifBundle;
+        public static AssetBundle notifBundle, otherBundle;
 
         public static Vector3 defaultGravity = Vector3.zero;
 
@@ -111,7 +115,6 @@ namespace Heavenly
             Console.ForegroundColor = ConsoleColor.Gray;
             Patches.ApplyPatches();
             Main.defaultGravity = Physics.gravity;
-            WebsocketHandler.ConnectToWebsockets();
             MelonCoroutines.Start(Main.Welcome());
 
             
@@ -135,6 +138,10 @@ namespace Heavenly
         {
             base.OnUpdate();
 
+            //if(debugList != null)
+            //{
+            //    debugList.AddEntry("<color=green>Update test</color>");
+            //}
 
             #region Keybinds
 
@@ -347,6 +354,9 @@ namespace Heavenly
             {
                 yield return null;
             }
+
+            WebsocketHandler.ConnectToWebsockets();
+
             NetworkManager.field_Internal_Static_NetworkManager_0.field_Internal_VRCEventDelegate_1_Player_0.field_Private_HashSet_1_UnityAction_1_T_0.Add(new Action<VRC.Player>(NotificationHandler.JoinNotify));
             NetworkManager.field_Internal_Static_NetworkManager_0.field_Internal_VRCEventDelegate_1_Player_1.field_Private_HashSet_1_UnityAction_1_T_0.Add(new Action<VRC.Player>(NotificationHandler.LeaveNotify));
 
@@ -383,7 +393,7 @@ namespace Heavenly
             }
             else
             {
-                var newAvi = new HevApiAvatar(PU.GetVRCPlayer().field_Private_ApiAvatar_0.name, PU.GetVRCPlayer().field_Private_ApiAvatar_0.id, PU.GetVRCPlayer().field_Private_ApiAvatar_0.authorId, PU.GetVRCPlayer().field_Private_ApiAvatar_0.authorName, PU.GetVRCPlayer().field_Private_ApiAvatar_0.imageUrl, PU.GetVRCPlayer().field_Private_ApiAvatar_0.thumbnailImageUrl);
+                var newAvi = new HevApiAvatar(PU.GetVRCPlayer().field_Private_ApiAvatar_0.name, PU.GetVRCPlayer().field_Private_ApiAvatar_0.id, PU.GetVRCPlayer().field_Private_ApiAvatar_0.authorId, PU.GetVRCPlayer().field_Private_ApiAvatar_0.authorName, PU.GetVRCPlayer().field_Private_ApiAvatar_0.imageUrl, PU.GetVRCPlayer().field_Private_ApiAvatar_0.thumbnailImageUrl, (int)PU.GetVRCPlayer().field_Private_ApiAvatar_0.supportedPlatforms);
                 File.WriteAllText("Heavenly\\HeavenlyFavorites.txt", JsonConvert.SerializeObject(new List<HevApiAvatar>() { newAvi }));
             }
 
@@ -470,12 +480,17 @@ namespace Heavenly
             ButtonHandler.GetBlockButtonOFF().GetComponentInChildren<Image>().color = Color.red;
             ButtonHandler.GetBlockButtonON().GetComponentInChildren<Image>().color = Color.red;
 
-            //var fuck = GameObject.Instantiate(ButtonHandler.GetQuickMenuNotifTab(), ButtonHandler.GetQuickMenuNotifTab().transform.parent);
 
             mainMenu = new QMNestedButton("ShortcutMenu", 2.50f, 0.86f, "", "Main Menu", Color.red);
             mainMenu.getMainButton().getGameObject().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HeavenlyButton.png");
 
             #region Shortcut Menu
+
+            debugTab = new QMTabButton("DebugTab", otherBundle.LoadAsset<Sprite>("HeavenlyIcon.png"), Color.black);
+
+            debugList = new HevList(debugTab.getMenuName(), "QuickMenuDebug");
+
+            debugList.AddEntry("<color=green>Started Heavenly</color>");
 
             #region Main Menu
 

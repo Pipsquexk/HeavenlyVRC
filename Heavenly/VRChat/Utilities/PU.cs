@@ -83,7 +83,7 @@ namespace Heavenly.VRChat.Utilities
 
         public static ApiAvatar ToApiAvatar(this HevApiAvatar avi)
         {
-            return new ApiAvatar() { name = avi.name, id = avi.id, authorName = avi.authorName, authorId = avi.authorId, thumbnailImageUrl = avi.thumbnailImageUrl, assetUrl = avi.assetUrl };
+            return new ApiAvatar() { name = avi.name, id = avi.id, authorName = avi.authorName, authorId = avi.authorId, thumbnailImageUrl = avi.thumbnailImageUrl, assetUrl = avi.assetUrl, supportedPlatforms = (ApiModel.SupportedPlatforms)(avi.platforms == null ? 1 : avi.platforms) };
         }
 
         public static void RequestToTagAlong(string tagId)

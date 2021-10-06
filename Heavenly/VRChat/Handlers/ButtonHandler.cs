@@ -151,7 +151,7 @@ namespace Heavenly.VRChat.Handlers
             return GameObject.Find("/UserInterface/QuickMenu/MicControls");
         }
 
-        public static void SetButtonColor(GameObject gameObject, Color color, bool highlight = false)
+        public static void SetButtonColor(GameObject gameObject, Color color)
         {
             gameObject.GetComponentInChildren<Button>().colors = new ColorBlock()
             {

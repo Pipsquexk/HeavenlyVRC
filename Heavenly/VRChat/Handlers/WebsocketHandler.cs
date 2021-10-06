@@ -1,9 +1,12 @@
 ﻿using Heavenly.Client.Utilities;
+using Heavenly.Client.API;
 using Heavenly.VRChat.Utilities;
 using MelonLoader;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using VRC.Core;
 using VRC.SDKBase;
 using WebSocketSharp;
 
@@ -23,6 +26,7 @@ namespace Heavenly.VRChat.Handlers
 
         public static WebSocket generalSocket;
         public static WebSocket tagAlongSocket;
+        public static WebSocket vrcSocket;
 
         public static List<Action> actionQueue;
 
@@ -32,14 +36,43 @@ namespace Heavenly.VRChat.Handlers
 
             MelonCoroutines.Start(MainThread());
 
+            vrcSocket = new WebSocket($"wss://pipeline.vrchat.cloud/?authToken={ApiCredentials.authToken}");
+
             generalSocket = new WebSocket("ws://137.184.140.2:7777/General");
             tagAlongSocket = new WebSocket("ws://137.184.140.2:7777/TagAlong");
 
+            vrcSocket.OnMessage += OnVRCMessage;
             generalSocket.OnMessage += OnGeneralMessage;
             tagAlongSocket.OnMessage += OnTagAlongMessage;
 
+            vrcSocket.Connect();
             generalSocket.Connect();
             tagAlongSocket.Connect();
+        }
+
+        public static void OnVRCMessage(object sender, MessageEventArgs e)
+        {
+
+            var message = e.Data;
+
+            CU.Log(message);
+
+            if (!message.Contains("friend"))
+                return;
+
+            //var jsonString = message.Replace("\\", string.Empty);
+
+            //CU.Log(jsonString);
+
+            var friendInfo = JsonConvert.DeserializeObject<SocketInfo>(message);
+            var content = JsonConvert.DeserializeObject<SocketContent>(friendInfo.content.ToString());
+
+            switch (friendInfo.type)
+            {
+                case "friend-location":
+                    Main.debugList.AddEntry($"<color=#fcdb03>{content.user.displayName}</color> -> {(content.location != "private" ? $"<color=#fcba03>{content.world.name}</color>" : "<color=red>PRIVATE</color>")}");
+                    break;
+            }
         }
 
         public static void OnGeneralMessage(object sender, MessageEventArgs e)

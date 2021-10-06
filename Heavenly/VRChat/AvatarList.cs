@@ -61,7 +61,7 @@ namespace Heavenly.VRChat
 
             avatars.Add(avatar);
 
-            hAvatars.Add(new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.thumbnailImageUrl, avatar.assetUrl));
+            hAvatars.Add(new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.thumbnailImageUrl, avatar.assetUrl, (int)avatar.supportedPlatforms));
 
             vrcAvatarList.Method_Protected_Void_List_1_T_Int32_Boolean_VRCUiContentButton_0<ApiAvatar>(avatars);
 
@@ -115,7 +115,7 @@ namespace Heavenly.VRChat
             avatars.Insert(0, avatar);
 
             hAvatars = JsonConvert.DeserializeObject<List<HevApiAvatar>>(favTxt);
-            hAvatars.Insert(0, new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.thumbnailImageUrl, avatar.assetUrl));
+            hAvatars.Insert(0, new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.thumbnailImageUrl, avatar.assetUrl, (int)avatar.supportedPlatforms));
             var apiList = JsonConvert.SerializeObject(hAvatars);
 
             File.WriteAllText("Heavenly\\HeavenlyFavorites.txt", apiList);

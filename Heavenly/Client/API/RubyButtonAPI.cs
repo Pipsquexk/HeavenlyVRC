@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using VRC.UI;
+using Heavenly.VRChat.Handlers;
 
 namespace RubyButtonAPI
 {
@@ -410,6 +411,65 @@ namespace RubyButtonAPI
             backButton.DestroyMe();
         }
     }
+
+    public class QMTabButton
+    {
+        protected string menuName;
+        protected string QMLoc;
+        protected GameObject gameObject;
+
+        public QMTabButton(string name, Sprite icon = null, Color? color = null)
+        {
+            QMLoc = name;
+            initButton(name, icon, color);
+        }
+
+        public void initButton(string name, Sprite icon = null, Color? color = null)
+        {
+            Transform menu = UnityEngine.Object.Instantiate<Transform>(QMStuff.NestedMenuTemplate(), QMStuff.GetQuickMenuInstance().transform);
+            menuName = QMButtonAPI.identifier + QMLoc;
+            menu.name = menuName;
+
+            gameObject = GameObject.Instantiate(ButtonHandler.GetQuickMenuNotifTab(), ButtonHandler.GetQuickMenuNotifTab().transform.parent);
+
+            gameObject.name = menuName + "_TabButton";
+
+            gameObject.GetComponentInChildren<Button>().onClick = new Button.ButtonClickedEvent();
+            gameObject.GetComponentInChildren<Button>().onClick.AddListener(new Action(() => { QMStuff.ShowQuickmenuPage(menuName); }));
+
+            Il2CppSystem.Collections.IEnumerator enumerator = menu.transform.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                Il2CppSystem.Object obj = enumerator.Current;
+                Transform btnEnum = obj.Cast<Transform>();
+                if (btnEnum != null)
+                {
+                    UnityEngine.Object.Destroy(btnEnum.gameObject);
+                }
+            }
+
+            if (color != null)
+            {
+                ButtonHandler.SetButtonColor(gameObject, color.Value);
+            }
+
+            if (icon != null)
+            {
+                gameObject.transform.Find("Icon").GetComponent<Image>().sprite = icon;
+            }
+        }
+
+        public string getMenuName()
+        {
+            return menuName;
+        }
+
+        public GameObject getGameObject()
+        {
+            return gameObject;
+        }
+    }
+
     public class QMStuff
     {
         private static GameObject SingleSliderReference;

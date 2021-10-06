@@ -49,23 +49,22 @@ namespace Heavenly.Client.Utilities
             if (!Directory.Exists("Heavenly"))
             {
                 Directory.CreateDirectory("Heavenly");
-                File.WriteAllText("Heavenly\\Keybindings.cfg", JsonConvert.SerializeObject(new KeyConfig() { FlyKey = "F", EarrapeKey = "E", RejoinKey = "R" }));
-                File.WriteAllText("Heavenly\\Notifications.cfg", JsonConvert.SerializeObject(new NotifConfig() { Voice = "Male", UseNotifs = true }));
+                File.WriteAllText("Heavenly\\Configs\\Keybindings.cfg", JsonConvert.SerializeObject(new KeyConfig() { FlyKey = "F", EarrapeKey = "E", RejoinKey = "R" }));
+                File.WriteAllText("Heavenly\\Configs\\Notifications.cfg", JsonConvert.SerializeObject(new NotifConfig() { Voice = "Male", UseNotifs = true }));
                 using (WebClient client = new WebClient())
                 {
-                    client.DownloadFileAsync(new Uri("https://www.heavenlyclient.com/Notifs.hev"), "Heavenly\\Notifs.hev");
+                    client.DownloadFileAsync(new Uri("https://www.heavenlyclient.com/Notifs.hev"), "Heavenly\\Assets\\Notifs.hev");
                 }
             }
 
-            if (!File.Exists("Heavenly\\Keybindings.cfg"))
+            if (!File.Exists("Heavenly\\Configs\\Keybindings.cfg"))
             {
                 File.WriteAllText("Heavenly\\Keybindings.cfg", JsonConvert.SerializeObject(new KeyConfig() { FlyKey = "F", EarrapeKey = "E", RejoinKey = "R" }));
                 File.WriteAllText("Heavenly\\Notifications.cfg", JsonConvert.SerializeObject(new NotifConfig() { Voice = "Male", UseNotifs = true }));
-
             }
 
-            Main.kConfig = JsonConvert.DeserializeObject<KeyConfig>(File.ReadAllText("Heavenly\\Keybindings.cfg"));
-            Main.nConfig = JsonConvert.DeserializeObject<NotifConfig>(File.ReadAllText("Heavenly\\Notifications.cfg"));
+            Main.kConfig = JsonConvert.DeserializeObject<KeyConfig>(File.ReadAllText("Heavenly\\Configs\\Keybindings.cfg"));
+            Main.nConfig = JsonConvert.DeserializeObject<NotifConfig>(File.ReadAllText("Heavenly\\Configs\\Notifications.cfg"));
 
 
             Console.SetCursorPosition(0, top);
@@ -73,7 +72,8 @@ namespace Heavenly.Client.Utilities
             Console.WriteLine("Doing actual client stuff and things...");
             Console.Write("[===================     ]");
 
-            Main.notifBundle = AssetBundle.LoadFromFile("Heavenly\\Notifs.hev");
+            Main.notifBundle = AssetBundle.LoadFromFile("Heavenly\\Assets\\Notifs.hev");
+            Main.otherBundle = AssetBundle.LoadFromFile("Heavenly\\Assets\\Other.hev");
 
 
             Console.SetCursorPosition(0, top);

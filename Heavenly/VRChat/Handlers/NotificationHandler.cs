@@ -1,11 +1,11 @@
-﻿using System.Collections;
+﻿using Heavenly.Client.Utilities;
+using Heavenly.VRChat.Utilities;
+using MelonLoader;
+using System;
+using System.Collections;
 using Transmtn;
 using UnityEngine;
 using VRC;
-using MelonLoader;
-using Heavenly.VRChat.Utilities;
-using System;
-using Heavenly.Client.Utilities;
 
 namespace Heavenly.VRChat.Handlers
 {
@@ -63,32 +63,36 @@ namespace Heavenly.VRChat.Handlers
                     }
                 }
 
-                if (p.field_Private_APIUser_0.id == myId || Main.nConfig.UseNotifs == false)
+                if (p.field_Private_APIUser_0.id == myId)
                     return;
 
+                Main.debugList.AddEntry($"{p.field_Private_APIUser_0.displayName} <color=green>joined</color> your jobby");
 
+                if (Main.nConfig.UseNotifs == false)
+                    return;
 
                 MelonCoroutines.Start(Join());
             }
-            catch (Exception ex)
+            catch (NullReferenceException)
             {
-                if (ex.GetType() == typeof(NullReferenceException))
-                {
-                    CU.Log(ConsoleColor.Yellow, "Something with join notifications is wrong. More Specifically, something is empty. Please submit a support ticket at https://discord.gg/APz5CANAvt in the #support-tickets channel with a screenshot of this.");
-                }
-                else
-                {
-                    CU.Log(ConsoleColor.Yellow, "Something with join notifications is wrong. Please submit a support ticket at https://discord.gg/APz5CANAvt in the #support-tickets channel with a screenshot of the following.");
-                    CU.Log(ConsoleColor.Red, ex.ToString());
-                }
+                CU.Log(ConsoleColor.Yellow, "Something with join notifications is wrong. More Specifically, something is empty. Please submit a support ticket at https://discord.gg/APz5CANAvt in the #support-tickets channel with a screenshot of this.");
+            }
+            catch (UnhollowerBaseLib.Il2CppException ex2)
+            {
+                CU.Log(ConsoleColor.Yellow, "Something with join notifications is wrong. Please submit a support ticket at https://discord.gg/APz5CANAvt in the #support-tickets channel with a screenshot of the following.");
+                CU.Log(ConsoleColor.Red, ex2.ToString());
             }
         }
 
         public static void LeaveNotify(Player p)
         {
-            if (p.field_Private_APIUser_0.id == myId || Main.nConfig.UseNotifs == false)
+            if (p.field_Private_APIUser_0.id == myId)
                 return;
 
+            Main.debugList.AddEntry($"{p.field_Private_APIUser_0.displayName} <color=red>left</color> your jobby");
+
+            if (Main.nConfig.UseNotifs == false)
+                return;
 
             MelonCoroutines.Start(Leave());
         }
