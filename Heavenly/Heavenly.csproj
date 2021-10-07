@@ -216,7 +216,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="Client\Patches.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VRChat\AvatarList.cs" />
+    <Compile Include="Client\API\AvatarList.cs" />
     <Compile Include="VRChat\Handlers\ButtonHandler.cs" />
     <Compile Include="VRChat\Handlers\NotificationHandler.cs" />
     <Compile Include="VRChat\Handlers\WebsocketHandler.cs" />

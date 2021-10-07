@@ -448,7 +448,7 @@ namespace Heavenly
                 UIU.OpenKeyboardPopup("Search Avatars", "Enter Author/Avatar name.....", (str, LK, tex) =>
                 {
                     searchList.searchQuery = str;
-                    MelonCoroutines.Start(searchList.AddSearchAvatars(CU.SearchAvatars(str)));
+                    CU.SearchAvatars(str);
                 });
             }));
 

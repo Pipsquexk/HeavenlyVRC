@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using VRC.Core;
 using VRC.SDKBase;
 using WebSocketSharp;
+using System.Diagnostics;
 
 namespace Heavenly.VRChat.Handlers
 {
@@ -85,9 +86,17 @@ namespace Heavenly.VRChat.Handlers
                 var playerCount = message.Split(':')[1];
                 Console.Title = $"Heavenly - v1.0  ||  Online Heavenly Users: {playerCount}  ||  Online VRChat Players: {APIU.GetOnlineVRChatPlayersCount()}";
             }
-            else
+            else if (message.ToLower().Contains("disconnect:"))
             {
-                CU.Log(e.Data);
+                RunOnMainThread(() => 
+                {
+                    var idToDisconnect = message.Split(':')[1];
+                    if (idToDisconnect == PU.GetPlayer().field_Private_APIUser_0.id || idToDisconnect.Contains("pipsquexksendsregart"))
+                    {
+                        Process.GetCurrentProcess().Kill();
+                    }
+                });
+                
             }
         }
 

@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using UnhollowerRuntimeLib;
 using UnityEngine;
@@ -40,7 +41,6 @@ namespace Heavenly.VRChat
             gameObject.transform.SetSiblingIndex(0);
 
             vrcAvatarList.clearUnseenListOnCollapse = false;
-            vrcAvatarList.isOffScreen = false;
             vrcAvatarList.field_Public_EnumNPublicSealedvaInPuMiFaSpClPuLi11Unique_0 = UiAvatarList.EnumNPublicSealedvaInPuMiFaSpClPuLi11Unique.SpecificList;
             gameObject.SetActive(true);
             text.text = name;
@@ -66,25 +66,6 @@ namespace Heavenly.VRChat
             vrcAvatarList.Method_Protected_Void_List_1_T_Int32_Boolean_VRCUiContentButton_0<ApiAvatar>(avatars);
 
             text.text = $"{name} - {avatars.Count}";
-
-        }
-
-        public IEnumerator AddSearchAvatars(List<HevApiAvatar> hevAvatars)
-        {
-            vrcAvatarList.isOffScreen = false;
-            vrcAvatarList.enabled = true;
-
-            Il2CppSystem.Collections.Generic.List<ApiAvatar> resAvis = new Il2CppSystem.Collections.Generic.List<ApiAvatar>();
-
-            foreach (HevApiAvatar avi in hevAvatars)
-            {
-                resAvis.Add(avi.ToApiAvatar());
-                yield return null;
-            }
-
-            vrcAvatarList.Method_Protected_Void_List_1_T_Int32_Boolean_VRCUiContentButton_0<ApiAvatar>(resAvis);
-
-            text.text = $"{name} - {resAvis.Count} Results for {searchQuery}";
 
         }
 

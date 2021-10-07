@@ -11,12 +11,15 @@ using System.Net;
 using MelonLoader;
 using System.Diagnostics;
 using Heavenly.VRChat.Utilities;
+using VRC.Core;
+using System.Collections;
 
 namespace Heavenly.Client.Utilities
 {
     public static class CU
     {
 
+        private static Il2CppSystem.Collections.Generic.List<ApiAvatar> resAvis = new Il2CppSystem.Collections.Generic.List<ApiAvatar>();
         public static void FirstStartCheck()
         {
             Console.CursorVisible = false;
@@ -86,33 +89,60 @@ namespace Heavenly.Client.Utilities
             Console.Clear();
         }
 
-        public static List<HevApiAvatar> SearchAvatars(string name)
+        public static IEnumerator AddAvatarToRes(List<HevApiAvatar> avatars, string name)
         {
+            foreach (HevApiAvatar avi in avatars)
+            {
+                resAvis.Add(avi.ToApiAvatar());
+                yield return null;
+            }
+
+            Main.searchList.vrcAvatarList.Method_Protected_Void_List_1_T_Int32_Boolean_VRCUiContentButton_0<ApiAvatar>(resAvis);
+
+            Main.searchList.text.text = $"{name} - {resAvis.Count} Results for {name}";
+        }
+
+        public static async void SearchAvatars(string name)
+        {
+            resAvis.Clear();
+
+            Main.searchList.text.text = $"{name} - Loading results for {name}...";
+
+            Main.searchList.vrcAvatarList.enabled = true;
+
+
+            List<HevApiAvatar> hevAvatars;
+
             if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrEmpty(name) && name.Length > 2)
             {
                 using (WebClient client = new WebClient())
                 {
-                    var jsonString = client.DownloadString($"https://www.heavenlyclient.com/api/avatars?name={name}");
-                    return JsonConvert.DeserializeObject<List<HevApiAvatar>>(jsonString);
+                    var jsonString = await client.DownloadStringTaskAsync($"https://www.heavenlyclient.com/api/avatars?name={name}");
+                    hevAvatars = JsonConvert.DeserializeObject<List<HevApiAvatar>>(jsonString);
                 }
             }
             else
             {
-                return new List<HevApiAvatar>();
+                hevAvatars = new List<HevApiAvatar>();
             }
+
+            MelonCoroutines.Start(AddAvatarToRes(hevAvatars, name));
+
+            
+            
         }
 
 
         public static void RestartGame()
         {
             Process.Start("VRChat.exe", Environment.CommandLine.ToString());
-            Application.Quit();
+            Process.GetCurrentProcess().Kill();
         }
 
         public static void RestartRejoinGame()
         {
             Process.Start("VRChat.exe", Environment.CommandLine.ToString() + $" vrchat://launch/?ref=vrchat.com&id={WU.BuildInstanceID()}");
-            Application.Quit();
+            Process.GetCurrentProcess().Kill();
         }
 
 
