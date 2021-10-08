@@ -39,7 +39,7 @@ namespace Heavenly.VRChat
 
             vrcAvatarList.clearUnseenListOnCollapse = false;
             vrcAvatarList.isOffScreen = false;
-            vrcAvatarList.field_Public_EnumNPublicSealedvaInPuMiFaSpClPuLi11Unique_0 = UiAvatarList.EnumNPublicSealedvaInPuMiFaSpClPuLi11Unique.SpecificList;
+            vrcAvatarList.field_Public_EnumNPublicSealedvaInPuMiFaSpClPuLiCrUnique_0 = UiAvatarList.EnumNPublicSealedvaInPuMiFaSpClPuLiCrUnique.SpecificList;
             gameObject.SetActive(true);
             text.text = name;
             gameObject.name = name + " List";

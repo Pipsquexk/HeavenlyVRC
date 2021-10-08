@@ -43,9 +43,6 @@
     <Reference Include="Il2CppSystem.Core">
       <HintPath>D:\Steam\steamapps\common\VRChat\MelonLoader\Managed\Il2CppSystem.Core.dll</HintPath>
     </Reference>
-    <Reference Include="LZ4">
-      <HintPath>D:\Steam\steamapps\common\VRChat\Heavenly\Dependencies\LZ4.dll</HintPath>
-    </Reference>
     <Reference Include="MelonLoader">
       <HintPath>D:\Steam\steamapps\common\VRChat\MelonLoader\MelonLoader.dll</HintPath>
     </Reference>
@@ -162,6 +159,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "C:\Users\liamv\source\repos\HeavenlyVRC\Heavenly\bin\Debug\Heavenly.dll" "D:\Steam\steamapps\common\VRChat\Mods"</PostBuildEvent>
+    <PostBuildEvent>copy "C:\Users\liamv\source\repos\Heavenly\Heavenly\bin\Debug\Heavenly.dll" "C:\Program Files (x86)\Steam\steamapps\common\VRChat\Mods"</PostBuildEvent>
   </PropertyGroup>
 </Project>
