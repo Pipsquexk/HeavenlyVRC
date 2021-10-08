@@ -15,8 +15,9 @@ namespace Heavenly.Client.API
         public string authorId { get; set; }
         public string thumbnailImageUrl { get; set; }
         public string assetUrl { get; set; }
+        public int? platforms { get; set; }
         
-        public HevApiAvatar(string name, string id, string authorId, string authorName, string thumbnailImageUrl, string assetUrl)
+        public HevApiAvatar(string name, string id, string authorId, string authorName, string thumbnailImageUrl, string assetUrl, int? platforms)
         {
             this.name = name;
             this.id = id;
@@ -24,6 +25,7 @@ namespace Heavenly.Client.API
             this.authorId = authorId;
             this.thumbnailImageUrl = thumbnailImageUrl;
             this.assetUrl = assetUrl;
+            this.platforms = platforms;
         }
     }
 }

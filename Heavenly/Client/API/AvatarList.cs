@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using UnhollowerRuntimeLib;
 using UnityEngine;
@@ -19,6 +20,8 @@ namespace Heavenly.VRChat
 
         public GameObject gameObject;
         public GameObject originObject = GameObject.Find("/UserInterface/MenuContent/Screens/Avatar/Vertical Scroll View/Viewport/Content/Public Avatar List");
+
+        public string searchQuery = "NULL";
 
         public UiAvatarList vrcAvatarList;
 
@@ -38,8 +41,7 @@ namespace Heavenly.VRChat
             gameObject.transform.SetSiblingIndex(0);
 
             vrcAvatarList.clearUnseenListOnCollapse = false;
-            vrcAvatarList.isOffScreen = false;
-            vrcAvatarList.field_Public_EnumNPublicSealedvaInPuMiFaSpClPuLiCrUnique_0 = UiAvatarList.EnumNPublicSealedvaInPuMiFaSpClPuLiCrUnique.SpecificList;
+            vrcAvatarList.field_Public_EnumNPublicSealedvaInPuMiFaSpClPuLi11Unique_0 = UiAvatarList.EnumNPublicSealedvaInPuMiFaSpClPuLi11Unique.SpecificList;
             gameObject.SetActive(true);
             text.text = name;
             gameObject.name = name + " List";
@@ -57,32 +59,13 @@ namespace Heavenly.VRChat
             vrcAvatarList.isOffScreen = false;
             vrcAvatarList.enabled = true;
 
-            avatars.Insert(0, avatar);
+            avatars.Add(avatar);
 
-            hAvatars.Insert(0, new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.thumbnailImageUrl, avatar.assetUrl));
+            hAvatars.Add(new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.thumbnailImageUrl, avatar.assetUrl, (int)avatar.supportedPlatforms));
 
             vrcAvatarList.Method_Protected_Void_List_1_T_Int32_Boolean_VRCUiContentButton_0<ApiAvatar>(avatars);
 
             text.text = $"{name} - {avatars.Count}";
-
-        }
-
-        public IEnumerator AddSearchAvatars(List<HevApiAvatar> hevAvatars)
-        {
-            vrcAvatarList.isOffScreen = false;
-            vrcAvatarList.enabled = true;
-
-            Il2CppSystem.Collections.Generic.List<ApiAvatar> resAvis = new Il2CppSystem.Collections.Generic.List<ApiAvatar>();
-
-            foreach (HevApiAvatar avi in hevAvatars)
-            {
-                resAvis.Add(avi.ToApiAvatar());
-                yield return null;
-            }
-
-            vrcAvatarList.Method_Protected_Void_List_1_T_Int32_Boolean_VRCUiContentButton_0<ApiAvatar>(resAvis);
-
-            text.text = $"{name} - {resAvis.Count} Results";
 
         }
 
@@ -113,7 +96,7 @@ namespace Heavenly.VRChat
             avatars.Insert(0, avatar);
 
             hAvatars = JsonConvert.DeserializeObject<List<HevApiAvatar>>(favTxt);
-            hAvatars.Insert(0, new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.thumbnailImageUrl, avatar.assetUrl));
+            hAvatars.Insert(0, new HevApiAvatar(avatar.name, avatar.id, avatar.authorId, avatar.authorName, avatar.thumbnailImageUrl, avatar.assetUrl, (int)avatar.supportedPlatforms));
             var apiList = JsonConvert.SerializeObject(hAvatars);
 
             File.WriteAllText("Heavenly\\HeavenlyFavorites.txt", apiList);
