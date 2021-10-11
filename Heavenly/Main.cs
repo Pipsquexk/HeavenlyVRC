@@ -22,9 +22,15 @@ using VRC.SDKBase;
 using VRC.Udon;
 using VRC.UI;
 
+using RoomManager = MonoBehaviourPublicICurrentLocationBoApDiApBo2InBoObMeUnique;
+using VRCWebSocketsManager = MonoBehaviourPublicObApAcApBoAcStBoStObUnique;
+using PageAvatar = MonoBehaviour1PublicObReObBoVeBoGaVeStBoUnique;
+using VRCPlayer = MonoBehaviour2PublicOb_pObSt_pTeBoObStSiUnique;
+using System.Net;
+
 namespace Heavenly
 {
-    public class Main : MelonMod
+    public class Main
     {
 
         public static HighlightsFXStandalone friendsFX, trustedFX, knownFX, userFX, newUserFX, visitorFX;
@@ -83,46 +89,13 @@ namespace Heavenly
 
         public static Player selectedSit;
 
-        public override void OnApplicationStart()
+        public void Start()
         {
-            Console.Clear();
-            MelonUtils.SetConsoleTitle($"Heavenly - v1.0");
-            CU.FirstStartCheck();
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("                   ,                                 _        ");
-            Console.WriteLine("                  /|   |                            | |       ");
-            Console.WriteLine("                   |___|  _   __,        _   _  _   | |       ");
-            Console.WriteLine("                   |   |\\|/  /  |  |  |_|/  / |/ |  |/  |   | ");
-            Console.WriteLine("                   |   |/|__/\\_/|_/ \\/  |__/  |  |_/|__/ \\_/|/");
-            Console.WriteLine("                                                           /| ");
-            Console.WriteLine("                                                           \\| ");
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine("                                    I\'m back");
-            Console.WriteLine(" ");
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"                        ╔─────────────╤───────────────╗");
-            Console.WriteLine($"                        │  Ctrl + {Main.kConfig.FlyKey}   ║   Direct Fly  │");
-            Console.WriteLine($"                        ╞─────────────╬───────────────╡");
-            Console.WriteLine($"                        │  Ctrl + {Main.kConfig.EarrapeKey}   ║  Earrape Mic  │");
-            Console.WriteLine($"                        ╞─────────────╬───────────────╡");
-            Console.WriteLine($"                        │  Ctrl + {Main.kConfig.RejoinKey}   ║     Rejoin    │");
-            Console.WriteLine($"                        ╞─────────────╬───────────────╡");
-            Console.WriteLine($"                        │  Ctrl + M   ║   Monke Mode  │");
-            Console.WriteLine($"                        ╞─────────────╬───────────────╡");
-            Console.WriteLine($"                        │  Ctrl + S   ║   Serialize   │");
-            Console.WriteLine($"                        ╚─────────────╧───────────────╝");
-            Console.WriteLine($" ");
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Patches.ApplyPatches();
-            Main.defaultGravity = Physics.gravity;
-            MelonCoroutines.Start(Main.Welcome());
-
-            
+            MelonCoroutines.Start(Startup());
         }
 
-        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
+        public void SceneWasLoaded(int buildIndex, string sceneName)
         {
-            base.OnSceneWasLoaded(buildIndex, sceneName);
             if (buildIndex == -1)
             {
                 if (!nConfig.UseNotifs)
@@ -134,9 +107,8 @@ namespace Heavenly
             }
         }
 
-        public override void OnUpdate()
+        public void Update()
         {
-            base.OnUpdate();
 
             //if(debugList != null)
             //{
@@ -272,6 +244,7 @@ namespace Heavenly
                 monke = !monke;
                 if (monke)
                 {
+                    //PageAvatar
                     new PageAvatar()
                     {
                         field_Public_SimpleAvatarPedestal_0 = new VRC.SimpleAvatarPedestal()
@@ -361,8 +334,8 @@ namespace Heavenly
             NetworkManager.field_Internal_Static_NetworkManager_0.field_Internal_VRCEventDelegate_1_Player_1.field_Private_HashSet_1_UnityAction_1_T_0.Add(new Action<VRC.Player>(NotificationHandler.LeaveNotify));
 
 
-
-            VRCWebSocketsManager.field_Private_Static_VRCWebSocketsManager_0.field_Private_Api_0.PostOffice.add_OnNotification(DelegateSupport.ConvertDelegate<Il2CppSystem.EventHandler<NotificationEvent>>(new Action<Il2CppSystem.Object, NotificationEvent>(NotificationHandler.NotificationNotify)));
+            //VRCWebSocketsManager
+            VRCWebSocketsManager.field_Private_Static_MonoBehaviourPublicObApAcApBoAcStBoStObUnique_0.field_Private_Api_0.PostOffice.add_OnNotification(DelegateSupport.ConvertDelegate<Il2CppSystem.EventHandler<NotificationEvent>>(new Action<Il2CppSystem.Object, NotificationEvent>(NotificationHandler.NotificationNotify)));
 
             friendsFX = HighlightsFX.prop_HighlightsFX_0.gameObject.AddComponent<HighlightsFXStandalone>();
             trustedFX = HighlightsFX.prop_HighlightsFX_0.gameObject.AddComponent<HighlightsFXStandalone>();
@@ -924,9 +897,9 @@ namespace Heavenly
 
             GameObject.Destroy(ButtonHandler.GetGalleryButtonVRCTag());
 
-            VRCUiCursorManager.field_Private_Static_VRCUiCursorManager_0.field_Public_VRCUiCursor_0.field_Public_Color_0 = Color.red / 1.4f;
-            VRCUiCursorManager.field_Private_Static_VRCUiCursorManager_0.field_Public_VRCUiCursor_0.field_Public_Color_1 = Color.red / 1.4f;
-            VRCUiCursorManager.field_Private_Static_VRCUiCursorManager_0.field_Public_VRCUiCursor_0.field_Public_Color_2 = Color.red / 1.4f;
+            VRCUiCursorManager.field_Private_Static_VRCUiCursorManager_0.field_Public_MonoBehaviourPublicAbstractICursorBoCoObCoTeSiCoObVeInUnique_5.field_Public_Color_0 = Color.red / 1.4f;
+            VRCUiCursorManager.field_Private_Static_VRCUiCursorManager_0.field_Public_MonoBehaviourPublicAbstractICursorBoCoObCoTeSiCoObVeInUnique_5.field_Public_Color_1 = Color.red / 1.4f;
+            VRCUiCursorManager.field_Private_Static_VRCUiCursorManager_0.field_Public_MonoBehaviourPublicAbstractICursorBoCoObCoTeSiCoObVeInUnique_5.field_Public_Color_2 = Color.red / 1.4f;
 
             #endregion
 
@@ -987,6 +960,56 @@ namespace Heavenly
                 }
                 yield return null;
             }
+        }
+
+        public IEnumerator Startup()
+        {
+            while (PU.GetPlayer() == null)
+            {
+                yield return null;
+            }
+
+            using (WebClient client = new WebClient())
+            {
+                client.Headers.Add("User-Agent", "Heavenly/1.0 (HeavenlyClient 1.0; Win64; x64)");
+                string jsonString = client.DownloadString($"https://www.heavenlyclient.com/api/user?userId={PU.GetPlayer().field_Private_APIUser_0.id}");
+                if (jsonString.ToLower().Contains("unregistered"))
+                {
+                    CU.KillClient();
+                }
+            }
+
+            Console.Clear();
+            MelonUtils.SetConsoleTitle($"Heavenly - v1.0");
+            CU.FirstStartCheck();
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("                   ,                                 _        ");
+            Console.WriteLine("                  /|   |                            | |       ");
+            Console.WriteLine("                   |___|  _   __,        _   _  _   | |       ");
+            Console.WriteLine("                   |   |\\|/  /  |  |  |_|/  / |/ |  |/  |   | ");
+            Console.WriteLine("                   |   |/|__/\\_/|_/ \\/  |__/  |  |_/|__/ \\_/|/");
+            Console.WriteLine("                                                           /| ");
+            Console.WriteLine("                                                           \\| ");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("                                    I\'m back");
+            Console.WriteLine(" ");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"                        ╔─────────────╤───────────────╗");
+            Console.WriteLine($"                        │  Ctrl + {Main.kConfig.FlyKey}   ║   Direct Fly  │");
+            Console.WriteLine($"                        ╞─────────────╬───────────────╡");
+            Console.WriteLine($"                        │  Ctrl + {Main.kConfig.EarrapeKey}   ║  Earrape Mic  │");
+            Console.WriteLine($"                        ╞─────────────╬───────────────╡");
+            Console.WriteLine($"                        │  Ctrl + {Main.kConfig.RejoinKey}   ║     Rejoin    │");
+            Console.WriteLine($"                        ╞─────────────╬───────────────╡");
+            Console.WriteLine($"                        │  Ctrl + M   ║   Monke Mode  │");
+            Console.WriteLine($"                        ╞─────────────╬───────────────╡");
+            Console.WriteLine($"                        │  Ctrl + S   ║   Serialize   │");
+            Console.WriteLine($"                        ╚─────────────╧───────────────╝");
+            Console.WriteLine($" ");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Patches.ApplyPatches();
+            Main.defaultGravity = Physics.gravity;
+            MelonCoroutines.Start(Main.Welcome());
         }
     }
 }

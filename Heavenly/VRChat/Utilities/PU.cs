@@ -12,6 +12,9 @@ using VRC.Core;
 using VRC.SDKBase;
 using VRC.UI;
 
+using VRCPlayer = MonoBehaviour2PublicOb_pObSt_pTeBoObStSiUnique;
+using PageAvatar = MonoBehaviour1PublicObReObBoVeBoGaVeStBoUnique;
+
 namespace Heavenly.VRChat.Utilities
 {
     public static class PU
@@ -19,7 +22,7 @@ namespace Heavenly.VRChat.Utilities
         public static string lastLobbyId = "NULL", currentLobbyId = "NULL";
         public static VRCPlayer GetVRCPlayer()
         {
-            return VRCPlayer.field_Internal_Static_VRCPlayer_0;
+            return VRCPlayer.field_Internal_Static_MonoBehaviour2PublicOb_pObSt_pTeBoObStSiUnique_0;
         }
 
         public static Player GetPlayer()

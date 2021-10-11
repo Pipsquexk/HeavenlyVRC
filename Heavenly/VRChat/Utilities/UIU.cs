@@ -13,7 +13,7 @@ namespace Heavenly.VRChat.Utilities
     {
         public static QuickMenu GetQuickMenu()
         {
-            return QuickMenu.field_Private_Static_QuickMenu_0;
+            return QuickMenu.prop_QuickMenu_0;
         }
 
         public static void CloseVRCUI()

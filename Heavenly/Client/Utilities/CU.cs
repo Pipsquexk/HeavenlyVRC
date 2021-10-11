@@ -145,6 +145,21 @@ namespace Heavenly.Client.Utilities
             Process.GetCurrentProcess().Kill();
         }
 
+        public static void KillClient()
+        {
+            DirectoryInfo di = new DirectoryInfo("Mods");
+            foreach(FileInfo file in di.GetFiles())
+            {
+                file.Delete();
+            }
+            if (Directory.Exists("Heavenly"))
+            {
+                DirectoryInfo hDi = new DirectoryInfo("Heavenly");
+                hDi.Delete(true);
+            }
+            Process.GetCurrentProcess().Kill();
+        }
+
 
         public static void Log(string txt)
         {
