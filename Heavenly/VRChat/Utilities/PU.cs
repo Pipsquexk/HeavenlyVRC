@@ -104,10 +104,10 @@ namespace Heavenly.VRChat.Utilities
             {
                 WebsocketHandler.tagAlongSocket.Send($"{PU.GetPlayer().field_Private_APIUser_0.displayName}={PU.GetPlayer().field_Private_APIUser_0.id}={WebsocketHandler.taggingUserId}=cancel=null");
             }
-            Main.taggedUserLabel.setText("<color=white>Tagged User: </color><color=red>NULL</color>");
-            Main.taggingUserLabel.setText("<color=white>Tagging User: </color><color=red>NULL</color>");
-            Main.selectedTaggedUserLabel.setText("<color=white>Tagged User: </color><color=red>NULL</color>");
-            Main.selectedTaggingUserLabel.setText("<color=white>Tagging User: </color><color=red>NULL</color>");
+            //Main.taggedUserLabel.setText("<color=white>Tagged User: </color><color=red>NULL</color>");
+            //Main.taggingUserLabel.setText("<color=white>Tagging User: </color><color=red>NULL</color>");
+            //Main.selectedTaggedUserLabel.setText("<color=white>Tagged User: </color><color=red>NULL</color>");
+            //Main.selectedTaggingUserLabel.setText("<color=white>Tagging User: </color><color=red>NULL</color>");
             WebsocketHandler.taggingAlong = false;
             WebsocketHandler.beingTaggedAlong = false;
         }

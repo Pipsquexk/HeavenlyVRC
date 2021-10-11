@@ -124,8 +124,8 @@ namespace Heavenly.VRChat.Handlers
                         taggedName = requestingName;
                         taggedUserId = requestingId;
                         tagAlongSocket.Send($"{PU.GetPlayer().field_Private_APIUser_0.displayName}={PU.GetPlayer().field_Private_APIUser_0.id}={requestingId}=response=null");
-                        Main.taggedUserLabel.setText($"<color=white>Tagged User: </color><color=green>{requestingName}</color>");
-                        Main.selectedTaggedUserLabel.setText($"<color=white>Tagged User: </color><color=green>{requestingName}</color>");
+                        //Main.taggedUserLabel.setText($"<color=white>Tagged User: </color><color=green>{requestingName}</color>");
+                        //Main.selectedTaggedUserLabel.setText($"<color=white>Tagged User: </color><color=green>{requestingName}</color>");
                         UIU.CloseVRCUI();
                     }), "Decline");
                 }));
@@ -141,8 +141,8 @@ namespace Heavenly.VRChat.Handlers
                         taggingName = requestingName;
                         taggingUserId = requestingId;
                         UIU.OpenVRCUINotifPopup("Tag Along Response", $"{requestingName} accepted your request to tag along!", "Okay");
-                        Main.taggingUserLabel.setText($"<color=white>Tagging User: </color><color=green>{requestingName}</color>");
-                        Main.selectedTaggingUserLabel.setText($"<color=white>Tagging User: </color><color=green>{requestingName}</color>");
+                        //Main.taggingUserLabel.setText($"<color=white>Tagging User: </color><color=green>{requestingName}</color>");
+                        //Main.selectedTaggingUserLabel.setText($"<color=white>Tagging User: </color><color=green>{requestingName}</color>");
                     }));
                 }
             }
@@ -158,10 +158,10 @@ namespace Heavenly.VRChat.Handlers
                 { 
                     taggingAlong = false; 
                     beingTaggedAlong = false;
-                    Main.taggedUserLabel.setText("<color=white>Tagged User: </color><color=red>NULL</color>");
-                    Main.taggingUserLabel.setText("<color=white>Tagging User: </color><color=red>NULL</color>");
-                    Main.selectedTaggedUserLabel.setText("<color=white>Tagged User: </color><color=red>NULL</color>");
-                    Main.selectedTaggingUserLabel.setText("<color=white>Tagging User: </color><color=red>NULL</color>");
+                    //Main.taggedUserLabel.setText("<color=white>Tagged User: </color><color=red>NULL</color>");
+                    //Main.taggingUserLabel.setText("<color=white>Tagging User: </color><color=red>NULL</color>");
+                    //Main.selectedTaggedUserLabel.setText("<color=white>Tagged User: </color><color=red>NULL</color>");
+                    //Main.selectedTaggingUserLabel.setText("<color=white>Tagging User: </color><color=red>NULL</color>");
                     UIU.OpenVRCUINotifPopup("Tag Along Cancel", $"{requestingName} canceled the tag along!", "Okay");
                 }));
             }

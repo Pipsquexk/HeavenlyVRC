@@ -6,7 +6,7 @@ using Heavenly.VRChat.Handlers;
 using Heavenly.VRChat.Utilities;
 using MelonLoader;
 using Newtonsoft.Json;
-using RubyButtonAPI;
+using NPButtonAPI.API;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,30 +30,32 @@ using System.Net;
 
 namespace Heavenly
 {
-    public class Main
+    public class Main : MelonMod
     {
 
         public static HighlightsFXStandalone friendsFX, trustedFX, knownFX, userFX, newUserFX, visitorFX;
 
-        public static QMTabButton debugTab;
+        //public static QMTabButton debugTab;
 
         public static HevList debugList;
 
-        public static QMNestedButton mainMenu, gameMenu, photonMenu, avatarMenu, voiceMenu, sitMenu, espMenu, tagAlongMenu;
-        public static QMNestedButton selectedMenu, selectedAvatarMenu, selectedTagAlongMenu;
+        public static NPNestedButton mainMenu;
 
-        public static QMSingleButton searchBotButton, forceCloneIdButton, restartButton, restartRejoinButton, rejoinCurrentLobbyButton, rejoinLastLobbyButton, cancelTagAlongButton;
-        public static QMSingleButton selectedDownloadVrcaButton, selectedTagAlongButton;
+        //public static QMNestedButton mainMenu, gameMenu, photonMenu, avatarMenu, voiceMenu, sitMenu, espMenu, tagAlongMenu;
+        //public static QMNestedButton selectedMenu, selectedAvatarMenu, selectedTagAlongMenu;
 
-        public static List<QMSingleButton> sitOptionButtons = new List<QMSingleButton>();
-        public static QMSingleButton headSitOptionButton, torsoSitOptionButton, lHandSitOptionButton, lFootSitOptionButton, rHandSitOptionButton, rFootSitOptionButton;
+        //public static QMSingleButton searchBotButton, forceCloneIdButton, restartButton, restartRejoinButton, rejoinCurrentLobbyButton, rejoinLastLobbyButton, cancelTagAlongButton;
+        //public static QMSingleButton selectedDownloadVrcaButton, selectedTagAlongButton;
+
+        //public static List<QMSingleButton> sitOptionButtons = new List<QMSingleButton>();
+        //public static QMSingleButton headSitOptionButton, torsoSitOptionButton, lHandSitOptionButton, lFootSitOptionButton, rHandSitOptionButton, rFootSitOptionButton;
         public static UnityEngine.HumanBodyBones sitBone = HumanBodyBones.Head;
 
-        public static QMToggleButton flyToggleButton, espToggleButton, serializeToggleButton, serializePosToggleButton, playerESPToggleButton, itemESPToggleButton, triggerESPToggleButton;
+        //public static QMToggleButton flyToggleButton, espToggleButton, serializeToggleButton, serializePosToggleButton, playerESPToggleButton, itemESPToggleButton, triggerESPToggleButton;
 
-        public static VRCSlider voiceGainSlider, othersVoiceGainSlider;
+        //public static VRCSlider voiceGainSlider, othersVoiceGainSlider;
 
-        public static VRCLabel taggedUserLabel, taggingUserLabel, selectedTaggedUserLabel, selectedTaggingUserLabel;
+        //public static VRCLabel taggedUserLabel, taggingUserLabel, selectedTaggedUserLabel, selectedTaggingUserLabel;
 
         public static Vector3 serPos;
         public static Quaternion serRot;
@@ -89,13 +91,15 @@ namespace Heavenly
 
         public static Player selectedSit;
 
-        public void Start()
+        public override void OnApplicationStart()
         {
+            base.OnApplicationStart();
             MelonCoroutines.Start(Startup());
         }
 
-        public void SceneWasLoaded(int buildIndex, string sceneName)
+        public override void OnSceneWasLoaded(int buildIndex, string sceneName)
         {
+            base.OnSceneWasLoaded(buildIndex, sceneName);
             if (buildIndex == -1)
             {
                 if (!nConfig.UseNotifs)
@@ -107,8 +111,10 @@ namespace Heavenly
             }
         }
 
-        public void Update()
+        public override void OnUpdate()
         {
+
+            base.OnUpdate();
 
             //if(debugList != null)
             //{
@@ -119,7 +125,7 @@ namespace Heavenly
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(kConfig.FlyKey.ToLower()))
             {
-                flyToggleButton.setToggleState(!directFly, true);
+                //flyToggleButton.setToggleState(!directFly, true);
             }
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("u"))
@@ -162,7 +168,7 @@ namespace Heavenly
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("s"))
             {
-                serializeToggleButton.setToggleState(!serialize, true);
+                //serializeToggleButton.setToggleState(!serialize, true);
             }
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("t"))
@@ -446,17 +452,18 @@ namespace Heavenly
                 yield return null;
             }
 
-            ButtonHandler.SetButtonColor(QMStuff.ToggleButtonTemplate(), Color.red);
-            ButtonHandler.GetBlockButton().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HexButton.png");
-            ButtonHandler.GetBlockButtonOFF().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HexToggleOFF.png");
-            ButtonHandler.GetBlockButtonON().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HexToggleON.png");
-            ButtonHandler.GetBlockButtonOFF().GetComponentInChildren<Image>().color = Color.red;
-            ButtonHandler.GetBlockButtonON().GetComponentInChildren<Image>().color = Color.red;
+            //ButtonHandler.SetButtonColor(QMStuff.ToggleButtonTemplate(), Color.red);
+            //ButtonHandler.GetBlockButton().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HexButton.png");
+            //ButtonHandler.GetBlockButtonOFF().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HexToggleOFF.png");
+            //ButtonHandler.GetBlockButtonON().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HexToggleON.png");
+            //ButtonHandler.GetBlockButtonOFF().GetComponentInChildren<Image>().color = Color.red;
+            //ButtonHandler.GetBlockButtonON().GetComponentInChildren<Image>().color = Color.red;
 
 
-            mainMenu = new QMNestedButton("ShortcutMenu", 2.50f, 0.86f, "", "Main Menu", Color.red);
-            mainMenu.getMainButton().getGameObject().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HeavenlyButton.png");
-
+            mainMenu = new NPNestedButton(NPMenuUtils.DashboardMenu, "Main Menu", "Main Menu", Color.red, Color.red);
+            //mainMenu.getMainButton().getGameObject().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HeavenlyButton.png");
+            
+            /*
             #region Shortcut Menu
 
             debugTab = new QMTabButton("DebugTab", otherBundle.LoadAsset<Sprite>("HeavenlyIcon.png"), Color.black);
@@ -931,7 +938,7 @@ namespace Heavenly
             #endregion
 
             playerESPToggleButton.setToggleState(true, true);
-
+            */
             Application.targetFrameRate = 244;
 
         }
@@ -964,20 +971,6 @@ namespace Heavenly
 
         public IEnumerator Startup()
         {
-            while (PU.GetPlayer() == null)
-            {
-                yield return null;
-            }
-
-            using (WebClient client = new WebClient())
-            {
-                client.Headers.Add("User-Agent", "Heavenly/1.0 (HeavenlyClient 1.0; Win64; x64)");
-                string jsonString = client.DownloadString($"https://www.heavenlyclient.com/api/user?userId={PU.GetPlayer().field_Private_APIUser_0.id}");
-                if (jsonString.ToLower().Contains("unregistered"))
-                {
-                    CU.KillClient();
-                }
-            }
 
             Console.Clear();
             MelonUtils.SetConsoleTitle($"Heavenly - v1.0");
@@ -1010,6 +1003,23 @@ namespace Heavenly
             Patches.ApplyPatches();
             Main.defaultGravity = Physics.gravity;
             MelonCoroutines.Start(Main.Welcome());
+
+            while (PU.GetPlayer() == null)
+            {
+                yield return null;
+            }
+
+            using (WebClient client = new WebClient())
+            {
+                client.Headers.Add("User-Agent", "Heavenly/1.0 (HeavenlyClient 1.0; Win64; x64)");
+                string jsonString = client.DownloadString($"https://www.heavenlyclient.com/api/auth?userId={PU.GetPlayer().field_Private_APIUser_0.id}");
+                if (jsonString.ToLower().Contains("unregistered"))
+                {
+                    CU.KillClient();
+                }
+            }
+
+            GameObject.Destroy(NPMenuUtils.VRCPlusCancer);
         }
     }
 }
