@@ -36,6 +36,13 @@ namespace NPButtonAPI.API
                 return QuickMenu.transform.Find("Container/Window/QMParent/Menu_Dashboard/ScrollRect/Viewport/VerticalLayoutGroup").gameObject;
             }
         }
+        public static GameObject DashboardMenuPanel
+        {
+            get
+            {
+                return QuickMenu.transform.Find("Container/Window/QMParent/Menu_Dashboard").gameObject;
+            }
+        }
         public static GameObject MenuHeader
         {
             get
@@ -153,12 +160,14 @@ namespace NPButtonAPI.API
             Tooltip.SetActive(true);
             MelonLoader.MelonCoroutines.Start(HideTooltip());
         }
+
         private static IEnumerator HideTooltip()
         {
             yield return new WaitForSeconds(5f);
             Tooltip.SetActive(false);
             Tooltip.GetComponent<UiTooltipPanel>().tooltipText.text = "";
         }
+
         public static GameObject LWingsMenu
         {
             get

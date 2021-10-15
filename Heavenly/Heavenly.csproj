@@ -75,7 +75,14 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>D:\Steam\steamapps\common\VRChat\MelonLoader\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTween, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\Steam\steamapps\common\VRChat\MelonLoader\Managed\DOTween.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTween.Modules">
+      <HintPath>D:\Steam\steamapps\common\VRChat\MelonLoader\Managed\DOTween.Modules.dll</HintPath>
     </Reference>
     <Reference Include="DotZLib">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\DotZLib.dll</HintPath>
@@ -121,6 +128,7 @@
     <Reference Include="UnhollowerRuntimeLib">
       <HintPath>D:\Steam\steamapps\common\VRChat\MelonLoader\Managed\UnhollowerRuntimeLib.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="UnityEngine">
       <HintPath>D:\Steam\steamapps\common\VRChat\MelonLoader\Managed\UnityEngine.dll</HintPath>
     </Reference>
@@ -170,8 +178,11 @@
     <Reference Include="VRC.Udon.Common">
       <HintPath>D:\Steam\steamapps\common\VRChat\MelonLoader\Managed\VRC.Udon.Common.dll</HintPath>
     </Reference>
+    <Reference Include="VRC.UI.Core">
+      <HintPath>D:\Steam\steamapps\common\VRChat\MelonLoader\Managed\VRC.UI.Core.dll</HintPath>
+    </Reference>
     <Reference Include="VRC.UI.Elements">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\VRChat\MelonLoader\Managed\VRC.UI.Elements.dll</HintPath>
+      <HintPath>D:\Steam\steamapps\common\VRChat\MelonLoader\Managed\VRC.UI.Elements.dll</HintPath>
     </Reference>
     <Reference Include="VRCCore-Editor, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -211,10 +222,18 @@
     <Compile Include="Client\API\NotifConfig.cs" />
     <Compile Include="Client\API\KeyConfig.cs" />
     <Compile Include="Client\API\HevApiAvatar.cs" />
-    <Compile Include="Client\API\RubyButtonAPI.cs" />
     <Compile Include="Client\API\SocketInfo.cs" />
     <Compile Include="Client\API\VRCLabel.cs" />
     <Compile Include="Client\API\VRCSlider.cs" />
+    <Compile Include="Client\NPButtonAPI\NPButtonAPI.cs" />
+    <Compile Include="Client\NPButtonAPI\NPMenuUtils.cs" />
+    <Compile Include="Client\NPButtonAPI\NPNestedButton.cs" />
+    <Compile Include="Client\NPButtonAPI\NPPageMenu.cs" />
+    <Compile Include="Client\NPButtonAPI\NPSingleButton.cs" />
+    <Compile Include="Client\NPButtonAPI\NPTabButton.cs" />
+    <Compile Include="Client\NPButtonAPI\NPToggleButton.cs" />
+    <Compile Include="Client\NPButtonAPI\NPWingsMenu.cs" />
+    <Compile Include="Client\NPButtonAPI\NPWingsToggle.cs" />
     <Compile Include="Client\Utilities\ApiFileHelper.cs" />
     <Compile Include="Client\Utilities\CU.cs" />
     <Compile Include="Client\Serialization.cs" />
@@ -233,6 +252,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "C:\Users\liamv\source\repos\Heavenly\Heavenly\bin\Debug\Heavenly.dll" "C:\Program Files (x86)\Steam\steamapps\common\VRChat\Mods"</PostBuildEvent>
+    <PostBuildEvent>copy "C:\Users\liamv\source\repos\HeavenlyVRC\Heavenly\bin\Debug\Heavenly.dll" "D:\Steam\steamapps\common\VRChat\Mods"</PostBuildEvent>
   </PropertyGroup>
 </Project>

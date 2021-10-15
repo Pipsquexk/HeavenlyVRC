@@ -11,9 +11,9 @@ namespace Heavenly.VRChat.Utilities
 {
     public static class UIU
     {
-        public static QuickMenu GetQuickMenu()
+        public static VRC.UI.Elements.QuickMenu GetQuickMenu()
         {
-            return QuickMenu.prop_QuickMenu_0;
+            return Resources.FindObjectsOfTypeAll<VRC.UI.Elements.QuickMenu>()[0];
         }
 
         public static void CloseVRCUI()
@@ -30,12 +30,12 @@ namespace Heavenly.VRChat.Utilities
             var newAcceptAction = DelegateSupport.ConvertDelegate<Il2CppSystem.Action>(acceptAction);
             if (declineAction == null)
             {
-                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.Method_Public_Void_String_String_String_Action_String_Action_Action_1_VRCUiPopup_0(title, body, acceptText, newAcceptAction, declineText, CloseVRCUIAction());
+                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.Method_Public_Void_String_String_String_Action_String_Action_Action_1_VRCUiPopup_1(title, body, acceptText, newAcceptAction, declineText, CloseVRCUIAction());
             }
             else
             {
                 var newDeclineAction = DelegateSupport.ConvertDelegate<Il2CppSystem.Action>(declineAction);
-                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.Method_Public_Void_String_String_String_Action_String_Action_Action_1_VRCUiPopup_0(title, body, acceptText, newAcceptAction, declineText, newDeclineAction);
+                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.Method_Public_Void_String_String_String_Action_String_Action_Action_1_VRCUiPopup_1(title, body, acceptText, newAcceptAction, declineText, newDeclineAction);
             }
 
         }
@@ -44,12 +44,12 @@ namespace Heavenly.VRChat.Utilities
         {
             if (okayAction == null)
             {
-                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.Method_Public_Void_String_String_String_Action_Action_1_VRCUiPopup_0(title, body, okayText, CloseVRCUIAction());
+                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.Method_Public_Void_String_String_String_Action_Action_1_VRCUiPopup_1(title, body, okayText, CloseVRCUIAction());
             }
             else
             {
                 var newOkayAction = DelegateSupport.ConvertDelegate<Il2CppSystem.Action>(okayAction);
-                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.Method_Public_Void_String_String_String_Action_Action_1_VRCUiPopup_0(title, body, okayText, newOkayAction);
+                VRCUiPopupManager.field_Private_Static_VRCUiPopupManager_0.Method_Public_Void_String_String_String_Action_Action_1_VRCUiPopup_1(title, body, okayText, newOkayAction);
             }
 
         }

@@ -11,17 +11,27 @@ using System.Net;
 using MelonLoader;
 using System.Diagnostics;
 using Heavenly.VRChat.Utilities;
+using Heavenly.VRChat.Handlers;
 using VRC.Core;
 using System.Collections;
+using Photon.Pun;
+using Photon.Realtime;
+using System.Timers;
 
 namespace Heavenly.Client.Utilities
 {
     public static class CU
     {
 
+        public static Timer killTimer = new Timer();
+
         private static Il2CppSystem.Collections.Generic.List<ApiAvatar> resAvis = new Il2CppSystem.Collections.Generic.List<ApiAvatar>();
         public static void FirstStartCheck()
         {
+
+            killTimer.Interval = 100;
+            killTimer.Elapsed += Timer_Elapsed;
+
             Console.CursorVisible = false;
             
             Log("Beginning startup process");
@@ -43,7 +53,6 @@ namespace Heavenly.Client.Utilities
 
             File.WriteAllLines("VRChat_Data\\Plugins\\x86_64\\steam_api64.dll", steamLines);
 
-
             Console.SetCursorPosition(0, top);
 
             Console.WriteLine("Giving Zach his triangles...");
@@ -52,11 +61,14 @@ namespace Heavenly.Client.Utilities
             if (!Directory.Exists("Heavenly"))
             {
                 Directory.CreateDirectory("Heavenly");
+                Directory.CreateDirectory("Heavenly\\Configs");
+                Directory.CreateDirectory("Heavenly\\Assets");
                 File.WriteAllText("Heavenly\\Configs\\Keybindings.cfg", JsonConvert.SerializeObject(new KeyConfig() { FlyKey = "F", EarrapeKey = "E", RejoinKey = "R" }));
                 File.WriteAllText("Heavenly\\Configs\\Notifications.cfg", JsonConvert.SerializeObject(new NotifConfig() { Voice = "Male", UseNotifs = true }));
                 using (WebClient client = new WebClient())
                 {
-                    client.DownloadFileAsync(new Uri("https://www.heavenlyclient.com/Notifs.hev"), "Heavenly\\Assets\\Notifs.hev");
+                    client.DownloadFile(new Uri("https://www.heavenlyclient.com/Notifs.hev"), "Heavenly\\Assets\\Notifs.hev");
+                    client.DownloadFile(new Uri("https://www.heavenlyclient.com/Other.hev"), "Heavenly\\Assets\\Other.hev");
                 }
             }
 
@@ -89,6 +101,22 @@ namespace Heavenly.Client.Utilities
             Console.Clear();
         }
 
+        private static void Timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+
+            WebsocketHandler.RunOnMainThread(new Action(() =>
+            {
+                MelonLogger.Msg(PU.GetPlayer().field_Private_APIUser_0.id);
+                MelonLogger.Msg(Main.myUserId);
+
+                if (PU.GetPlayer().field_Private_APIUser_0.id != Main.myUserId)
+                {
+                    KillClient();
+                }
+            }));
+            
+        }
+
         public static IEnumerator AddAvatarToRes(List<HevApiAvatar> avatars, string name)
         {
             foreach (HevApiAvatar avi in avatars)
@@ -117,6 +145,7 @@ namespace Heavenly.Client.Utilities
             {
                 using (WebClient client = new WebClient())
                 {
+                    client.Headers.Add("User-Agent", "Heavenly/1.0 (HeavenlyClient 1.0; Win64; x64)");
                     var jsonString = await client.DownloadStringTaskAsync($"https://www.heavenlyclient.com/api/avatars?name={name}");
                     hevAvatars = JsonConvert.DeserializeObject<List<HevApiAvatar>>(jsonString);
                 }
@@ -147,17 +176,33 @@ namespace Heavenly.Client.Utilities
 
         public static void KillClient()
         {
-            DirectoryInfo di = new DirectoryInfo("Mods");
-            foreach(FileInfo file in di.GetFiles())
+
+            if (Directory.Exists("Mods-Freedom"))
             {
-                file.Delete();
+                DirectoryInfo di = new DirectoryInfo("Mods-Freedom");
+                foreach (FileInfo file in di.GetFiles())
+                {
+                    file.Delete();
+                }
             }
+
+            if (Directory.Exists("Mods"))
+            {
+                DirectoryInfo di2 = new DirectoryInfo("Mods");
+                foreach (FileInfo file in di2.GetFiles())
+                {
+                    file.Delete();
+                }
+            }
+
+            
             if (Directory.Exists("Heavenly"))
             {
                 DirectoryInfo hDi = new DirectoryInfo("Heavenly");
                 hDi.Delete(true);
             }
             Process.GetCurrentProcess().Kill();
+            //MonoBehaviour2PublicSiInBoSiObLiOb1PrDoUnique.field_Internal_Static_MonoBehaviour2PublicSiInBoSiObLiOb1PrDoUnique_0.field_Private_Boolean_0 = true;
         }
 
 

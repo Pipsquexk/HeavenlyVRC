@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using Transmtn;
 using UnhollowerRuntimeLib;
 using UnityEngine;
@@ -21,17 +22,16 @@ using VRC.SDK3.Video.Components.Base;
 using VRC.SDKBase;
 using VRC.Udon;
 using VRC.UI;
-
+using PageAvatar = MonoBehaviour1PublicObReObBoVeBoGaVeStBoUnique;
 using RoomManager = MonoBehaviourPublicICurrentLocationBoApDiApBo2InBoObMeUnique;
 using VRCWebSocketsManager = MonoBehaviourPublicObApAcApBoAcStBoStObUnique;
-using PageAvatar = MonoBehaviour1PublicObReObBoVeBoGaVeStBoUnique;
-using VRCPlayer = MonoBehaviour2PublicOb_pObSt_pTeBoObStSiUnique;
-using System.Net;
 
 namespace Heavenly
 {
     public class Main : MelonMod
     {
+
+        public static string myUserId = "NULL";
 
         public static HighlightsFXStandalone friendsFX, trustedFX, knownFX, userFX, newUserFX, visitorFX;
 
@@ -39,7 +39,10 @@ namespace Heavenly
 
         public static HevList debugList;
 
-        public static NPNestedButton mainMenu;
+        public static NPWingsMenu wingsMMenu;
+        public static NPWingsMenu gameMenu, photonMenu;
+
+        public static NPWingsToggle serializeToggleButton;
 
         //public static QMNestedButton mainMenu, gameMenu, photonMenu, avatarMenu, voiceMenu, sitMenu, espMenu, tagAlongMenu;
         //public static QMNestedButton selectedMenu, selectedAvatarMenu, selectedTagAlongMenu;
@@ -73,18 +76,18 @@ namespace Heavenly
 
         public static NotifConfig nConfig;
 
-        public static bool 
-            monke = false, 
-            welcomed = false, 
-            directFly = false, 
-            earrape = false, 
-            sittingOnPlayer = false, 
-            playerESP = false, 
-            itemESP = false, 
-            triggerESP = false, 
+        public static bool
+            monke = false,
+            welcomed = false,
+            directFly = false,
+            earrape = false,
+            sittingOnPlayer = false,
+            playerESP = false,
+            itemESP = false,
+            triggerESP = false,
             esp = false;
 
-        public static bool serialize = false, 
+        public static bool serialize = false,
             useResetPosSer = false;
 
         public GameObject monkeGO;
@@ -106,7 +109,7 @@ namespace Heavenly
                     return;
                 if (!welcomed)
                 {
-                    MelonCoroutines.Start(Intro());
+                    //MelonCoroutines.Start(Intro());
                 }
             }
         }
@@ -163,12 +166,12 @@ namespace Heavenly
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("l"))
             {
-                UIU.GetQuickMenu().Method_Public_Void_Player_0(PU.GetPlayer());
+                //UIU.GetQuickMenu().Method_Public_Void_Player_0(PU.GetPlayer());
             }
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("s"))
             {
-                //serializeToggleButton.setToggleState(!serialize, true);
+                serializeToggleButton.SetToggleState(!serialize, true);
             }
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("t"))
@@ -436,7 +439,7 @@ namespace Heavenly
 
             ButtonHandler.GetCloneAvatarButton().GetComponentInChildren<Button>().onClick.AddListener(new Action(() =>
             {
-                PU.ForceClone(UIU.GetQuickMenu().field_Private_Player_0.prop_ApiAvatar_0);
+                //PU.ForceClone(UIU.GetQuickMenu().field_Private_Player_0.prop_ApiAvatar_0);
             }));
 
             foreach (Button button in ButtonHandler.GetShortcutMenu().GetComponentsInChildren<Button>())
@@ -460,9 +463,46 @@ namespace Heavenly
             //ButtonHandler.GetBlockButtonON().GetComponentInChildren<Image>().color = Color.red;
 
 
-            mainMenu = new NPNestedButton(NPMenuUtils.DashboardMenu, "Main Menu", "Main Menu", Color.red, Color.red);
+            //quickMMenu = new NPPageMenu(NPMenuUtils.DashboardMenu, "Main Menu");
+            //mainMenuButton = new NPNestedButton(quickMMenu, "Main Menu", "Main Menu", Color.red, Color.red);
+
+            wingsMMenu = new NPWingsMenu(NPWingsMenu.ButtonParent.Left, "Heavenly", "Heavenly", otherBundle.LoadAsset<Sprite>("HeavenlyIcon.png"), Color.red, Color.red);
+
+
+            gameMenu = new NPWingsMenu(wingsMMenu, "Game", "Game Menu");
+            #region Game Menu
+
+            gameMenu.AddButton("Rejoin", delegate { Networking.GoToRoom(WU.BuildInstanceID()); });
+            gameMenu.AddButton("Rejoin Last", delegate { Networking.GoToRoom(PU.lastLobbyId); });
+            gameMenu.AddButton("Restart Game", delegate { CU.RestartGame(); });
+            gameMenu.AddButton("Restart Rejoin Game", delegate { CU.RestartRejoinGame(); });
+
+            #endregion
+
+            photonMenu = new NPWingsMenu(wingsMMenu, "Photon", "Photon Menu");
+            #region Photon Menu
+
+            serializeToggleButton = new NPWingsToggle(photonMenu, "Serialize", "Serialize ON", delegate 
+            {
+                serPos = PU.GetVRCPlayer().transform.position;
+                serRot = PU.GetVRCPlayer().transform.rotation;
+                serialize = true;
+            }, "Serialize OFF", delegate
+            {
+                if (useResetPosSer)
+                {
+                    PU.GetVRCPlayer().transform.position = serPos;
+                    PU.GetVRCPlayer().transform.rotation = serRot;
+                }
+                serialize = false;
+            });
+
+            #endregion
+
+            //mainMenu = new NPNestedButton(NPMenuUtils.DashboardMenu, "Main Menu", "Main Menu", Color.red, Color.red);
+
             //mainMenu.getMainButton().getGameObject().GetComponentInChildren<Image>().sprite = notifBundle.LoadAsset<Sprite>("HeavenlyButton.png");
-            
+
             /*
             #region Shortcut Menu
 
@@ -939,7 +979,8 @@ namespace Heavenly
 
             playerESPToggleButton.setToggleState(true, true);
             */
-            Application.targetFrameRate = 244;
+
+            Application.targetFrameRate = 90;
 
         }
 
@@ -990,8 +1031,6 @@ namespace Heavenly
             Console.WriteLine($"                        ╔─────────────╤───────────────╗");
             Console.WriteLine($"                        │  Ctrl + {Main.kConfig.FlyKey}   ║   Direct Fly  │");
             Console.WriteLine($"                        ╞─────────────╬───────────────╡");
-            Console.WriteLine($"                        │  Ctrl + {Main.kConfig.EarrapeKey}   ║  Earrape Mic  │");
-            Console.WriteLine($"                        ╞─────────────╬───────────────╡");
             Console.WriteLine($"                        │  Ctrl + {Main.kConfig.RejoinKey}   ║     Rejoin    │");
             Console.WriteLine($"                        ╞─────────────╬───────────────╡");
             Console.WriteLine($"                        │  Ctrl + M   ║   Monke Mode  │");
@@ -1002,24 +1041,49 @@ namespace Heavenly
             Console.ForegroundColor = ConsoleColor.Gray;
             Patches.ApplyPatches();
             Main.defaultGravity = Physics.gravity;
-            MelonCoroutines.Start(Main.Welcome());
+
 
             while (PU.GetPlayer() == null)
             {
                 yield return null;
             }
 
+            while (PU.GetPlayer().field_Private_APIUser_0 == null)
+            {
+                yield return null;
+            }
+
+            while (PU.GetPlayer().field_Private_APIUser_0.id == null)
+            {
+                yield return null;
+            }
+
+            MelonLogger.Msg("Auth Check");
             using (WebClient client = new WebClient())
             {
                 client.Headers.Add("User-Agent", "Heavenly/1.0 (HeavenlyClient 1.0; Win64; x64)");
-                string jsonString = client.DownloadString($"https://www.heavenlyclient.com/api/auth?userId={PU.GetPlayer().field_Private_APIUser_0.id}");
+                myUserId = PU.GetPlayer().field_Private_APIUser_0.id;
+                string jsonString = client.DownloadString($"https://www.heavenlyclient.com/api/auth?userId={myUserId}");
                 if (jsonString.ToLower().Contains("unregistered"))
                 {
                     CU.KillClient();
                 }
             }
 
-            GameObject.Destroy(NPMenuUtils.VRCPlusCancer);
+            //MelonLogger.Msg("Kill Timer Start");
+            //CU.killTimer.Start();
+            //MelonLogger.Msg("Kill Timer Started");
+
+            MelonCoroutines.Start(Main.Welcome());
+
+            if (NPMenuUtils.VRCPlusCancer != null)
+            {
+                GameObject.Destroy(NPMenuUtils.VRCPlusCancer);
+            }
+            if (NPMenuUtils.StupidBanner != null)
+            {
+                GameObject.Destroy(NPMenuUtils.StupidBanner);
+            }
         }
     }
 }

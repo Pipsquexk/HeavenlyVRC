@@ -185,9 +185,15 @@ namespace Heavenly.VRChat.Handlers
         {
             while (true)
             {
+
+                while (PU.GetPlayer().field_Private_APIUser_0.id == null)
+                {
+                    yield return null;
+                }
+
                 if (actionQueue.Count > 0)
                 {
-                    actionQueue[0].Invoke();
+                    actionQueue[0]();
                     actionQueue.RemoveAt(0);
                 }
                 yield return null;

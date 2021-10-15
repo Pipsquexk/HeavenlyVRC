@@ -37,7 +37,8 @@ namespace Heavenly.VRChat.Utilities
 
         public static Player GetSelectedPlayer()
         {
-            return UIU.GetQuickMenu().field_Private_Player_0;
+            //return UIU.GetQuickMenu().field_Private_Player_0;
+            throw new NotImplementedException();
         }
 
         public static void DownloadAvatar(ApiAvatar avatar)

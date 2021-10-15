@@ -86,15 +86,27 @@ namespace Heavenly.VRChat.Handlers
 
         public static void LeaveNotify(Player p)
         {
-            if (p.field_Private_APIUser_0.id == myId)
-                return;
+            try
+            {
+                if (p.field_Private_APIUser_0.id == myId)
+                    return;
 
-            Main.debugList.AddEntry($"{p.field_Private_APIUser_0.displayName} <color=red>left</color> your jobby");
+                Main.debugList.AddEntry($"{p.field_Private_APIUser_0.displayName} <color=red>left</color> your jobby");
 
-            if (Main.nConfig.UseNotifs == false)
-                return;
+                if (Main.nConfig.UseNotifs == false)
+                    return;
 
-            MelonCoroutines.Start(Leave());
+                MelonCoroutines.Start(Leave());
+            }
+            catch (NullReferenceException)
+            {
+                CU.Log(ConsoleColor.Yellow, "Something with leave notifications is wrong. More Specifically, something is empty. Please submit a support ticket at https://discord.gg/APz5CANAvt in the #support-tickets channel with a screenshot of this.");
+            }
+            catch (UnhollowerBaseLib.Il2CppException ex2)
+            {
+                CU.Log(ConsoleColor.Yellow, "Something with leave notifications is wrong. Please submit a support ticket at https://discord.gg/APz5CANAvt in the #support-tickets channel with a screenshot of the following.");
+                CU.Log(ConsoleColor.Red, ex2.ToString());
+            }
         }
 
         public static void NotificationNotify(Il2CppSystem.Object o, NotificationEvent nE)
