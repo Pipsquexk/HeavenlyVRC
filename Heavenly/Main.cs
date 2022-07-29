@@ -1,58 +1,106 @@
-﻿using Heavenly.Client;
+using System;
+using System.IO;
+using System.Collections;
+using System.Collections.Generic;
+
+using Heavenly.Client;
 using Heavenly.Client.API;
 using Heavenly.Client.Utilities;
+
 using Heavenly.VRChat;
 using Heavenly.VRChat.Handlers;
 using Heavenly.VRChat.Utilities;
-using MelonLoader;
-using Newtonsoft.Json;
-using RubyButtonAPI;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+
 using Transmtn;
-using UnhollowerRuntimeLib;
 using UnityEngine;
+using MelonLoader;
 using UnityEngine.UI;
+
 using VRC;
-using VRC.Core;
-using VRC.SDK3.Video.Components.Base;
-using VRC.SDKBase;
-using VRC.Udon;
 using VRC.UI;
+using VRC.Udon;
+using VRC.Core;
+using VRC.SDKBase;
+using Newtonsoft.Json;
+using UnhollowerRuntimeLib;
+using VRC.SDK3.Video.Components.Base;
+
+using RubyButtonAPI;
+
 
 namespace Heavenly
 {
     public class Main : MelonMod
     {
 
-        public static HighlightsFXStandalone friendsFX, trustedFX, knownFX, userFX, newUserFX, visitorFX;
+        public static HighlightsFXStandalone friendsFX, 
+        trustedFX, 
+        knownFX, 
+        userFX, 
+        newUserFX, 
+        visitorFX;
 
         public static QMTabButton debugTab;
 
         public static HevList debugList;
 
-        public static QMNestedButton mainMenu, gameMenu, photonMenu, avatarMenu, voiceMenu, sitMenu, espMenu, tagAlongMenu;
-        public static QMNestedButton selectedMenu, selectedAvatarMenu, selectedTagAlongMenu;
+        public static QMNestedButton mainMenu, 
+        gameMenu, 
+        photonMenu, 
+        avatarMenu, 
+        voiceMenu, 
+        sitMenu, 
+        espMenu, 
+        tagAlongMenu;
+        
+        public static QMNestedButton selectedMenu, 
+        selectedAvatarMenu, 
+        selectedTagAlongMenu;
 
-        public static QMSingleButton searchBotButton, forceCloneIdButton, restartButton, restartRejoinButton, rejoinCurrentLobbyButton, rejoinLastLobbyButton, cancelTagAlongButton;
-        public static QMSingleButton selectedDownloadVrcaButton, selectedTagAlongButton;
+        public static QMSingleButton searchBotButton, 
+        forceCloneIdButton, 
+        restartButton, 
+        restartRejoinButton, 
+        rejoinCurrentLobbyButton, 
+        rejoinLastLobbyButton, 
+        cancelTagAlongButton;
+        
+        public static QMSingleButton selectedDownloadVrcaButton, 
+        selectedTagAlongButton;
 
         public static List<QMSingleButton> sitOptionButtons = new List<QMSingleButton>();
-        public static QMSingleButton headSitOptionButton, torsoSitOptionButton, lHandSitOptionButton, lFootSitOptionButton, rHandSitOptionButton, rFootSitOptionButton;
+        public static QMSingleButton headSitOptionButton, 
+        torsoSitOptionButton, 
+        lHandSitOptionButton, 
+        lFootSitOptionButton, 
+        rHandSitOptionButton, 
+        rFootSitOptionButton;
+        
         public static UnityEngine.HumanBodyBones sitBone = HumanBodyBones.Head;
 
-        public static QMToggleButton flyToggleButton, espToggleButton, serializeToggleButton, serializePosToggleButton, playerESPToggleButton, itemESPToggleButton, triggerESPToggleButton;
+        public static QMToggleButton flyToggleButton, 
+        espToggleButton, 
+        serializeToggleButton, 
+        serializePosToggleButton, 
+        playerESPToggleButton, 
+        itemESPToggleButton, 
+        triggerESPToggleButton;
 
-        public static VRCSlider voiceGainSlider, othersVoiceGainSlider;
+        public static VRCSlider voiceGainSlider, 
+        othersVoiceGainSlider;
 
-        public static VRCLabel taggedUserLabel, taggingUserLabel, selectedTaggedUserLabel, selectedTaggingUserLabel;
+        public static VRCLabel taggedUserLabel, 
+        taggingUserLabel, 
+        selectedTaggedUserLabel, 
+        selectedTaggingUserLabel;
 
         public static Vector3 serPos;
         public static Quaternion serRot;
 
-        public static GameObject heavenlyFavoriteButton, avatarDownloadVrcaButton, searchAvatarsButton, socialReqTagAlongButton;
+        public static GameObject heavenlyFavoriteButton, 
+        avatarDownloadVrcaButton, 
+        searchAvatarsButton, 
+        socialReqTagAlongButton;
 
         public static AvatarList favList;
         public static AvatarList searchList;
@@ -247,26 +295,6 @@ namespace Heavenly
                 }
             }
 
-            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("p"))
-            {
-                foreach (BaseVRCVideoPlayer vRCVideoPlayer in GameObject.FindObjectsOfType<BaseVRCVideoPlayer>())
-                {
-                    Networking.SetOwner(PU.GetVRCPlayerApi(), vRCVideoPlayer.gameObject);
-                    vRCVideoPlayer.Play();
-                    CU.Log($"[BaseVRCVideoPlayer] Play");
-                }
-
-                var outNumber = "NULL";
-                foreach (UdonBehaviour beh in GameObject.FindObjectsOfType<UdonBehaviour>())
-                {
-                    beh.publicVariables.TryGetVariableValue("solution", out outNumber);
-                    if (outNumber != null)
-                    {
-                        Console.WriteLine(outNumber);
-                    }
-                }
-            }
-
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("m"))
             {
                 monke = !monke;
@@ -321,15 +349,8 @@ namespace Heavenly
             if (directFly)
             {
                 var cam = Camera.main;
-                if (Input.GetAxis("Horizontal") != 0)
-                {
-                    PU.GetVRCPlayer().transform.position += cam.transform.right * (Input.GetAxis("Horizontal") * 13) * Time.deltaTime;
-                }
-
-                if (Input.GetAxis("Vertical") != 0)
-                {
-                    PU.GetVRCPlayer().transform.position += cam.transform.forward * (Input.GetAxis("Vertical") * 13) * Time.deltaTime;
-                }
+                if (Input.GetAxis("Horizontal") != 0) PU.GetVRCPlayer().transform.position += cam.transform.right * (Input.GetAxis("Horizontal") * 13) * Time.deltaTime;
+                if (Input.GetAxis("Vertical") != 0) PU.GetVRCPlayer().transform.position += cam.transform.forward * (Input.GetAxis("Vertical") * 13) * Time.deltaTime;
             }
 
             #endregion
@@ -359,7 +380,6 @@ namespace Heavenly
 
             NetworkManager.field_Internal_Static_NetworkManager_0.field_Internal_VRCEventDelegate_1_Player_0.field_Private_HashSet_1_UnityAction_1_T_0.Add(new Action<VRC.Player>(NotificationHandler.JoinNotify));
             NetworkManager.field_Internal_Static_NetworkManager_0.field_Internal_VRCEventDelegate_1_Player_1.field_Private_HashSet_1_UnityAction_1_T_0.Add(new Action<VRC.Player>(NotificationHandler.LeaveNotify));
-
 
 
             VRCWebSocketsManager.field_Private_Static_VRCWebSocketsManager_0.field_Private_Api_0.PostOffice.add_OnNotification(DelegateSupport.ConvertDelegate<Il2CppSystem.EventHandler<NotificationEvent>>(new Action<Il2CppSystem.Object, NotificationEvent>(NotificationHandler.NotificationNotify)));
