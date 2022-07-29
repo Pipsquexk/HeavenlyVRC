@@ -6,3 +6,7 @@ An update for VRChat's quick menu UI system was pushed shortly after, and absolu
 
 ![HeavenlyMenu](https://user-images.githubusercontent.com/25568473/181813815-6b983b01-6eed-42e7-aecc-756b2d9461c7.jpg)
 
+## Credits
+DubyaDude: Using RubyButtonAPI as a base for what later became a more modified RubyButtonAPI
+
+Greengray: The half of the Serialization.cs file that I didn't write
