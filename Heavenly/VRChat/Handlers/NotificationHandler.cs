@@ -1,11 +1,14 @@
-﻿using Heavenly.Client.Utilities;
-using Heavenly.VRChat.Utilities;
-using MelonLoader;
-using System;
+﻿using System;
 using System.Collections;
-using Transmtn;
-using UnityEngine;
+
 using VRC;
+using Transmtn;
+using MelonLoader;
+using UnityEngine;
+
+using Heavenly.VRChat.Utilities;
+using Heavenly.Client.Utilities;
+
 
 namespace Heavenly.VRChat.Handlers
 {
