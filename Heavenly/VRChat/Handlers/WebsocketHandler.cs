@@ -1,15 +1,18 @@
-﻿using Heavenly.Client.Utilities;
-using Heavenly.Client.API;
-using Heavenly.VRChat.Utilities;
-using MelonLoader;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Collections.Generic;
+
 using VRC.Core;
 using VRC.SDKBase;
+using MelonLoader;
 using WebSocketSharp;
-using System.Diagnostics;
+using Newtonsoft.Json;
+
+using Heavenly.Client.API;
+using Heavenly.VRChat.Utilities;
+using Heavenly.Client.Utilities;
+
 
 namespace Heavenly.VRChat.Handlers
 {
