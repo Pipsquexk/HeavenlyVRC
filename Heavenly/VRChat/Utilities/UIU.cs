@@ -1,30 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UnhollowerRuntimeLib;
+using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
+using UnhollowerRuntimeLib;
+
 
 namespace Heavenly.VRChat.Utilities
 {
     public static class UIU
     {
-        public static QuickMenu GetQuickMenu()
-        {
-            return QuickMenu.field_Private_Static_QuickMenu_0;
-        }
+        public static QuickMenu GetQuickMenu() => QuickMenu.field_Private_Static_QuickMenu_0;
 
-        public static void CloseVRCUI()
-        {
-            VRCUiManager.prop_VRCUiManager_0.Method_Public_Void_Boolean_Boolean_1(true, false);
-        }
+        public static void CloseVRCUI() => VRCUiManager.prop_VRCUiManager_0.Method_Public_Void_Boolean_Boolean_1(true, false);
 
-        public static Il2CppSystem.Action CloseVRCUIAction()
-        {
-            return DelegateSupport.ConvertDelegate<Il2CppSystem.Action>(new Action(() => { UIU.CloseVRCUI(); }));
-        }
+        public static Il2CppSystem.Action CloseVRCUIAction() => DelegateSupport.ConvertDelegate<Il2CppSystem.Action>(new Action(() => { UIU.CloseVRCUI(); }));
+
+        
         public static void OpenVRCUIPopup(string title, string body, string acceptText, Action acceptAction, string declineText, Action declineAction = null)
         {
             var newAcceptAction = DelegateSupport.ConvertDelegate<Il2CppSystem.Action>(acceptAction);
