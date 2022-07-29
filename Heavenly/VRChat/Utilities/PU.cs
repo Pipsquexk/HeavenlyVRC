@@ -1,42 +1,36 @@
-﻿using Heavenly.Client.API;
-using Heavenly.Client.Utilities;
-using Heavenly.VRChat.Handlers;
-using Newtonsoft.Json;
+﻿
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using UnityEngine;
+using System.Collections.Generic;
+
 using VRC;
+using VRC.UI;
 using VRC.Core;
 using VRC.SDKBase;
-using VRC.UI;
+using UnityEngine;
+using Newtonsoft.Json;
+
+using Heavenly.Client.API;
+using Heavenly.VRChat.Handlers;
+using Heavenly.Client.Utilities;
+
 
 namespace Heavenly.VRChat.Utilities
 {
     public static class PU
     {
-        public static string lastLobbyId = "NULL", currentLobbyId = "NULL";
-        public static VRCPlayer GetVRCPlayer()
-        {
-            return VRCPlayer.field_Internal_Static_VRCPlayer_0;
-        }
+        public static string lastLobbyId = "NULL", 
+        currentLobbyId = "NULL";
+        
+        public static VRCPlayer GetVRCPlayer() => VRCPlayer.field_Internal_Static_VRCPlayer_0;
+        
+        public static VRCPlayerApi GetVRCPlayerApi() => GetVRCPlayer().field_Private_VRCPlayerApi_0;
+        
+        public static Player GetPlayer() => Player.prop_Player_0;
+        public static Player GetSelectedPlayer() => UIU.GetQuickMenu().field_Private_Player_0;
 
-        public static Player GetPlayer()
-        {
-            return Player.prop_Player_0;
-        }
-
-        public static VRCPlayerApi GetVRCPlayerApi()
-        {
-            return GetVRCPlayer().field_Private_VRCPlayerApi_0;
-        }
-
-        public static Player GetSelectedPlayer()
-        {
-            return UIU.GetQuickMenu().field_Private_Player_0;
-        }
-
+        
         public static void DownloadAvatar(ApiAvatar avatar)
         {
             if (!Directory.Exists("Heavenly\\Avatars"))
