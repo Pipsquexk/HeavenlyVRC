@@ -186,11 +186,6 @@ namespace Heavenly
         {
             base.OnUpdate();
 
-            //if(debugList != null)
-            //{
-            //    debugList.AddEntry("<color=green>Update test</color>");
-            //}
-
             #region Keybinds
 
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(kConfig.FlyKey.ToLower()))
@@ -255,46 +250,6 @@ namespace Heavenly
                 //    }), "Decline");
             }
 
-            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("j"))
-            {
-                //Console.Write("Enter URL: ");
-                //var url = Console.ReadLine();
-                //foreach (BaseVRCVideoPlayer vRCVideoPlayer in GameObject.FindObjectsOfType<BaseVRCVideoPlayer>())
-                //{
-                //    Networking.SetOwner(PU.GetVRCPlayerApi(), vRCVideoPlayer.gameObject);
-                //    vRCVideoPlayer.EnableAutomaticResync = false;
-                //    CU.Log("[BaseVRCVideoPlayer] Disabled automatic resync");
-                //    vRCVideoPlayer.SetTime(0);
-                //    CU.Log("[BaseVRCVideoPlayer] Set time to 0");
-                //    vRCVideoPlayer.SetIndexMarker(0);
-                //    CU.Log("[BaseVRCVideoPlayer] Set index marker to 0");
-                //    vRCVideoPlayer.Stop();
-                //    CU.Log("[BaseVRCVideoPlayer] Stopped");
-                //    vRCVideoPlayer.LoadURL(new VRCUrl(url));
-                //    CU.Log($"[BaseVRCVideoPlayer] Loaded URL: {url}");
-                //    vRCVideoPlayer.PlayURL(new VRCUrl(url));
-                //    CU.Log($"[BaseVRCVideoPlayer] Play URL: {url}");
-                //    vRCVideoPlayer.Play();
-                //    CU.Log($"[BaseVRCVideoPlayer] Play");
-                //    foreach (IUdonBehaviour beh in vRCVideoPlayer._udonBehaviours)
-                //    {
-                //        beh.InitializeUdonContent();
-                //        beh.RunEvent("Fuck you", null);
-                //        beh.RunProgram("Fuck you");
-                //        beh.InitializeUdonContent();
-                //        beh.InitializeUdonContent();
-                //    }
-                //}
-
-                foreach (GameObject go in PU.GetAllGameObjects())
-                {
-                    if (go.transform.parent != null && go.transform.parent.parent != null)
-                    {
-                        CU.Log($"{go.transform.parent.parent.name}/{go.transform.parent.name}/{go.name}");
-                    }
-                }
-            }
-
             if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown("m"))
             {
                 monke = !monke;
@@ -335,8 +290,6 @@ namespace Heavenly
                 {
                     GameObject.Destroy(monkeGO);
                 }
-
-
 
                 CU.Log(monke ? "Monke" : "No Monke");
 
