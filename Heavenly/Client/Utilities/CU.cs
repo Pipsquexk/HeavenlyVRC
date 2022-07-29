@@ -1,18 +1,21 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
+using System.Net;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using UnityEngine;
-using Heavenly.Client.API;
-using System.Net;
-using MelonLoader;
-using System.Diagnostics;
-using Heavenly.VRChat.Utilities;
-using VRC.Core;
 using System.Collections;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+using VRC.Core;
+using UnityEngine;
+using MelonLoader;
+using Newtonsoft.Json;
+
+using Heavenly.Client.API;
+using Heavenly.VRChat.Utilities;
+
 
 namespace Heavenly.Client.Utilities
 {
@@ -127,9 +130,6 @@ namespace Heavenly.Client.Utilities
             }
 
             MelonCoroutines.Start(AddAvatarToRes(hevAvatars, name));
-
-            
-            
         }
 
 
